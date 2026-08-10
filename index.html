@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-<html lang="am">
+[8/10/2026 7:58 PM] .: <!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Harmony Cafe | ሃርሞኒ ካፌ</title>
 
-  <!-- Ethiopian/Amharic-friendly font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,10 +20,10 @@
       --white: #ffffff;
       --soft: #f4f1e9;
       --text: #252525;
-      --muted: #6c6c6c;
+      --muted: #777;
       --border: #e6e0d4;
       --gold: #b28a42;
-      --shadow: 0 10px 30px rgba(45, 30, 20, .08);
+      --shadow: 0 8px 25px rgba(45, 30, 20, .08);
     }
 
     * {
@@ -41,7 +40,7 @@
       font-family: "Noto Sans Ethiopic", "Segoe UI", Arial, sans-serif;
       background: var(--cream);
       color: var(--text);
-      line-height: 1.7;
+      line-height: 1.5;
     }
 
     a {
@@ -49,7 +48,14 @@
       text-decoration: none;
     }
 
-    /* NAVIGATION */
+    button {
+      font-family: inherit;
+    }
+
+    /* =========================
+       NAVIGATION
+    ========================= */
+
     nav {
       position: sticky;
       top: 0;
@@ -62,37 +68,36 @@
     .nav-inner {
       max-width: 1150px;
       margin: auto;
-      padding: 12px 20px;
+      padding: 10px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
     }
 
     .nav-brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
       font-weight: 800;
       color: var(--burgundy);
     }
 
     .nav-brand img {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       object-fit: contain;
       border-radius: 50%;
     }
 
     .nav-links {
       display: flex;
-      gap: 22px;
       align-items: center;
+      gap: 24px;
     }
 
     .nav-links a {
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       color: #333;
     }
 
@@ -111,78 +116,22 @@
       cursor: pointer;
     }
 
-    /* HERO */
-    .hero {
-      min-height: 650px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 70px 20px;
-      background:
-        radial-gradient(circle at top, rgba(123,16,37,.05), transparent 40%),
-        linear-gradient(180deg, #fff 0%, var(--cream) 100%);
-    }
-
-    .hero-content {
-      max-width: 850px;
-    }
-
-    .logo {
-      width: 190px;
-      height: 190px;
-      object-fit: contain;
-      margin-bottom: 15px;
-      filter: drop-shadow(0 8px 14px rgba(0,0,0,.08));
-    }
-
-    .eyebrow {
-      color: var(--green);
-      font-weight: 700;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-
-    .hero h1 {
-      color: var(--burgundy);
-      font-size: clamp(42px, 7vw, 78px);
-      line-height: 1.05;
-      letter-spacing: 2px;
-      margin-bottom: 12px;
-      font-weight: 800;
-    }
-
-    .hero h2 {
-      color: var(--green-dark);
-      font-size: clamp(22px, 4vw, 34px);
-      margin-bottom: 15px;
-      font-weight: 700;
-    }
-
-    .hero p {
-      color: var(--muted);
-      font-size: 17px;
-    }
-
-    .hero-buttons {
-      margin-top: 28px;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
+    /* =========================
+       BUTTONS
+    ========================= */
 
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
-      padding: 12px 20px;
-      border-radius: 10px;
+      gap: 6px;
+      padding: 11px 18px;
+      border-radius: 9px;
       border: 1px solid var(--border);
       background: white;
       color: var(--burgundy);
       font-weight: 700;
+      font-size: 14px;
       transition: .2s ease;
     }
 
@@ -204,13 +153,86 @@
     }
 
     .btn.gold {
+      color: #765719;
       border-color: var(--gold);
-      color: #7b5b1e;
     }
 
-    /* SECTIONS */
+    /* =========================
+       HERO
+    ========================= */
+
+    .hero {
+      min-height: 590px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 55px 20px;
+      background:
+        radial-gradient(
+          circle at top,
+          rgba(123,16,37,.06),
+          transparent 42%
+        ),
+        linear-gradient(
+          180deg,
+          #fff 0%,
+          var(--cream) 100%
+        );
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .logo {
+      width: 165px;
+      height: 165px;
+      object-fit: contain;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 8px 14px rgba(0,0,0,.08));
+    }
+
+    .eyebrow {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 7px;
+    }
+[8/10/2026 7:58 PM] .: .hero h1 {
+      color: var(--burgundy);
+      font-size: clamp(40px, 7vw, 72px);
+      line-height: 1;
+      letter-spacing: 2px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .hero h2 {
+      color: var(--green-dark);
+      font-size: clamp(21px, 4vw, 31px);
+      margin-bottom: 9px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .hero-buttons {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* =========================
+       GENERAL SECTIONS
+    ========================= */
+
     section {
-      padding: 75px 20px;
+      padding: 65px 20px;
     }
 
     .container {
@@ -220,26 +242,32 @@
 
     .section-heading {
       text-align: center;
-      margin-bottom: 35px;
+      margin-bottom: 28px;
     }
 
     .section-heading span {
       color: var(--green);
-      font-weight: 700;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1px;
     }
 
     .section-heading h2 {
       color: var(--burgundy);
-      font-size: 36px;
-      margin-top: 5px;
+      font-size: 34px;
+      margin-top: 4px;
     }
 
     .section-heading p {
       color: var(--muted);
-      margin-top: 5px;
+      margin-top: 3px;
+      font-size: 14px;
     }
 
-    /* ABOUT */
+    /* =========================
+       ABOUT
+    ========================= */
+
     .about {
       background: white;
     }
@@ -247,48 +275,54 @@
     .about-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 35px;
-      align-items: center;
+      gap: 25px;
     }
 
     .about-card {
       background: var(--soft);
-      padding: 35px;
+      padding: 28px;
       border-radius: 18px;
       border: 1px solid var(--border);
     }
 
     .about-card h3 {
       color: var(--burgundy);
-      font-size: 25px;
-      margin-bottom: 12px;
+      font-size: 23px;
+      margin-bottom: 8px;
     }
 
     .about-card p {
       color: #555;
+      font-size: 14px;
     }
 
     .features {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
+      gap: 12px;
     }
 
     .feature {
-      padding: 22px;
+      padding: 20px;
       background: white;
       border: 1px solid var(--border);
       border-radius: 14px;
-      box-shadow: var(--shadow);
+      box-shadow: 0 5px 18px rgba(0,0,0,.035);
+      font-size: 13px;
+      color: #555;
     }
 
     .feature strong {
       display: block;
       color: var(--green);
-      margin-bottom: 4px;
+      margin-bottom: 3px;
+      font-size: 14px;
     }
 
-    /* MENU */
+    /* =========================
+       MENU
+    ========================= */
+
     .menu-section {
       background: var(--cream);
     }
@@ -297,19 +331,19 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 9px;
-      margin-bottom: 32px;
+      gap: 8px;
+      margin-bottom: 25px;
     }
 
     .filter-btn {
       border: 1px solid var(--border);
       background: white;
       color: #333;
-      padding: 10px 17px;
+      padding: 9px 15px;
       border-radius: 999px;
       cursor: pointer;
-      font-family: inherit;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 13px;
       transition: .2s;
     }
 
@@ -328,70 +362,89 @@
 
     .menu-item {
       display: flex;
-      justify-content: space-between;
-      gap: 18px;
       background: white;
-      padding: 22px;
       border: 1px solid var(--border);
-      border-radius: 14px;
-      box-shadow: 0 5px 18px rgba(0,0,0,.035);
-      transition: .2s;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,.035);
+      transition: .2s ease;
     }
 
     .menu-item:hover {
       transform: translateY(-3px);
       box-shadow: var(--shadow);
-      border-color: rgba(8,116,67,.25);
+    }
+
+    .menu-image {
+      width: 115px;
+      min-width: 115px;
+      height: 115px;
+      object-fit: cover;
+      background: var(--soft);
+    }
+
+    .menu-info {
+      padding: 15px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .menu-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
     }
 
     .menu-item h3 {
       color: var(--burgundy);
-      font-size: 19px;
-      margin-bottom: 4px;
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    .price {
+      color: var(--green);
+      font-weight: 800;
+      white-space: nowrap;
+      font-size: 15px;
     }
 
     .menu-item p {
       color: var(--muted);
-      font-size: 14px;
-    }
-
-    .price {
-      flex: 0 0 auto;
-      color: var(--green);
-      font-weight: 800;
-      white-space: nowrap;
-      font-size: 17px;
+      font-size: 12px;
+      margin-top: 6px;
+      line-height: 1.45;
     }
 
     .menu-item.hidden {
       display: none;
     }
+[8/10/2026 7:58 PM] .: /* =========================
+       LOCATION
+    ========================= */
 
-    /* LOCATION */
     .location-section {
       background: white;
     }
 
     .location-card {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 30px;
-      align-items: center;
       background: var(--soft);
       border: 1px solid var(--border);
-      padding: 35px;
+      padding: 30px;
       border-radius: 20px;
+      text-align: center;
     }
 
     .location-card h2 {
       color: var(--burgundy);
-      margin-bottom: 10px;
-      font-size: 30px;
+      font-size: 27px;
+      margin-bottom: 8px;
     }
 
     .contact-line {
-      margin: 10px 0;
+      margin: 7px 0;
       color: #444;
+      font-size: 14px;
     }
 
     .contact-line strong {
@@ -401,67 +454,50 @@
     .buttons {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 22px;
+      justify-content: center;
+      gap: 9px;
+      margin-top: 18px;
     }
 
-    /* QR */
-    .qr-box {
-      text-align: center;
-      background: white;
-      padding: 22px;
-      border-radius: 18px;
-      border: 2px solid var(--green);
-    }
+    /* =========================
+       FOOTER
+    ========================= */
 
-    .qr-box img {
-      width: min(300px, 100%);
-      height: auto;
-      image-rendering: pixelated;
-      display: block;
-      margin: 0 auto 10px;
-    }
-
-    .qr-box h3 {
-      color: var(--burgundy);
-      margin-bottom: 3px;
-    }
-
-    .qr-box p {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    /* FOOTER */
     footer {
       background: var(--burgundy);
       color: white;
       text-align: center;
-      padding: 30px 20px;
+      padding: 25px 20px;
     }
 
     footer strong {
-      color: white;
+      font-size: 14px;
     }
 
     footer small {
       display: block;
-      margin-top: 5px;
+      margin-top: 4px;
       opacity: .8;
+      font-size: 11px;
     }
 
-    /* MOBILE */
+    /* =========================
+       MOBILE
+    ========================= */
+
     @media (max-width: 800px) {
+
       .nav-links {
         display: none;
         position: absolute;
         left: 0;
         right: 0;
-        top: 72px;
+        top: 64px;
         background: white;
         border-bottom: 1px solid var(--border);
-        padding: 18px 20px;
+        padding: 15px 20px;
         flex-direction: column;
+        gap: 16px;
       }
 
       .nav-links.open {
@@ -472,8 +508,7 @@
         display: block;
       }
 
-      .about-grid,
-      .location-card {
+      .about-grid {
         grid-template-columns: 1fr;
       }
 
@@ -482,35 +517,85 @@
       }
 
       .features {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
       }
 
       .hero {
-        min-height: 580px;
+        min-height: 540px;
       }
 
       .logo {
-        width: 155px;
-        height: 155px;
+        width: 145px;
+        height: 145px;
       }
     }
 
     @media (max-width: 480px) {
+
       section {
-        padding: 55px 15px;
+        padding: 50px 14px;
       }
 
       .hero {
-        padding: 55px 15px;
+        padding: 45px 15px;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+      }
+
+      .hero-buttons .btn {
+        width: 100%;
+      }
+
+      .section-heading h2 {
+        font-size: 29px;
       }
 
       .menu-item {
-        padding: 17px;
+        min-height: 105px;
       }
 
-      .location-card,
+      .menu-image {
+        width: 95px;
+        min-width: 95px;
+        height: 105px;
+      }
+
+      .menu-info {
+        padding: 12px;
+      }
+
+      .menu-item h3 {
+        font-size: 15px;
+      }
+
+      .price {
+        font-size: 14px;
+      }
+
+      .menu-item p {
+        font-size: 11px;
+      }
+
+      .features {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .feature {
+        padding: 15px 12px;
+      }
+
       .about-card {
         padding: 22px;
+      }
+
+      .location-card {
+        padding: 22px 15px;
+      }
+
+      .buttons .btn {
+        flex: 1 1 40%;
       }
     }
   </style>
@@ -518,31 +603,42 @@
 
 <body>
 
-  <!-- NAVIGATION -->
+  <!-- =========================
+       NAVIGATION
+  ========================= -->
+
   <nav>
     <div class="nav-inner">
 
       <a href="#home" class="nav-brand">
-        <img src="harmony-logo.jpg" alt="Harmony Cafe Logo">
+        <img src="harmony-logo.jpg" alt="Harmony Cafe">
         <span>Harmony Cafe</span>
       </a>
 
-      <button class="menu-toggle" onclick="toggleNav()" aria-label="Open menu">
+      <button
+        class="menu-toggle"
+        onclick="toggleNav()"
+        aria-label="Open menu">
         ☰
       </button>
 
       <div class="nav-links" id="navLinks">
-        <a href="#home" onclick="closeNav()">መነሻ</a>
-        <a href="#about" onclick="closeNav()">ስለ እኛ</a>
-        <a href="#menu" onclick="closeNav()"></a>
-        <a href="#location" onclick="closeNav()">አድራሻ</a>
+        <a href="#home" onclick="closeNav()">Home</a>
+        <a href="#about" onclick="closeNav()">About</a>
+        <a href="#menu" onclick="closeNav()">Menu</a>
+        <a href="#location" onclick="closeNav()">Location</a>
       </div>
 
     </div>
   </nav>
 
-  <!-- HERO -->
+
+  <!-- =========================
+       HERO
+  ========================= -->
+
   <header class="hero" id="home">
+
     <div class="hero-content">
 
       <img
@@ -551,7 +647,9 @@
         class="logo"
       >
 
-      <div class="eyebrow">እንኳን ወደ Harmony Cafe በሰላም መጡ</div>
+      <div class="eyebrow">
+        እንኳን ደህና መጡ
+      </div>
 
       <h1>HARMONY CAFE</h1>
 
@@ -561,299 +659,594 @@
         Good Food • Good Coffee • Good Vibes
       </p>
 
-    
-
       <div class="hero-buttons">
-        <a href="#menu" class="btn green">🍽️ ምናሌያችንን ይመልከቱ</a>
-        <a href="tel:+251911903172" class="btn red">📞 ይደውሉልን</a>
+[8/10/2026 7:58 PM] .: <a href="#menu" class="btn green">
+          🍽 View Menu
+        </a>
+
+        <a href="tel:+251911903172" class="btn red">
+          📞 Call Us
+        </a>
+
       </div>
 
     </div>
+
   </header>
 
-  <!-- ABOUT -->
+
+  <!-- =========================
+       ABOUT
+  ========================= -->
+
   <section class="about" id="about">
+
     <div class="container">
 
       <div class="section-heading">
-        <span>WELCOME</span>
-        <h2>ስለ Harmony Cafe</h2>
-        <p>የሚያስደስት ምግብ፣ ቡና እና የተረጋጋ ድባብ</p>
+        <span>ABOUT US</span>
+        <h2>Harmony Cafe</h2>
+        <p>ቡና • ምግብ • ጭማቂ</p>
       </div>
 
       <div class="about-grid">
 
         <div class="about-card">
-          <h3>በ Harmony Cafe ይደሰቱ</h3>
+
+          <h3>ቀላል ነው። ጥሩ ነው።</h3>
 
           <p>
-            Harmony Cafe በአዳማ የሚገኝ የምግብና የቡና መዝናኛ ቦታ ነው።
-            በጥራት የተዘጋጀ ምግብ፣ ትኩስ ቡና፣ ጭማቂ እና
-            የተለያዩ ስናክሶችን እናቀርባለን።
+            ትኩስ ቡና፣ ጥሩ ምግብ እና ምቹ ድባብ።
           </p>
 
-          <p style="margin-top:15px;">
-            ከጓደኞችዎ ጋር ለመዝናናት፣ ለቤተሰብ ጊዜ ወይም
-            ለጥሩ ቡና ጊዜዎን በHarmony Cafe ያሳልፉ።
-          </p>
         </div>
 
         <div class="features">
 
           <div class="feature">
-            <strong>☕ ትኩስ ቡና</strong>
-            ትኩስ እና ጥራት ያለው ቡና።
+            <strong>☕ ቡና</strong>
+            ትኩስ እና ጥራት ያለው
           </div>
 
           <div class="feature">
-            <strong>🍽️ ጥራት ያለው ምግብ</strong>
-            በጥንቃቄ የተዘጋጀ ምግብ።
+            <strong>🍽 ምግብ</strong>
+            ትኩስ እና ጣፋጭ
           </div>
 
           <div class="feature">
-            <strong>🥤 ትኩስ ጭማቂ</strong>
-            ከትኩስ ፍራፍሬ የተዘጋጀ።
+            <strong>🥤 ጭማቂ</strong>
+            ትኩስ ፍራፍሬ
           </div>
 
           <div class="feature">
-            <strong>🤝 ምቹ አገልግሎት</strong>
-            ለደንበኞቻችን ምቹ አገልግሎት።
+            <strong>🤝 አገልግሎት</strong>
+            ምቹ እና ፈጣን
           </div>
 
         </div>
+
       </div>
+
     </div>
+
   </section>
 
-  <!-- MENU -->
+
+  <!-- =========================
+       MENU
+  ========================= -->
+
   <section class="menu-section" id="menu">
+
     <div class="container">
 
       <div class="section-heading">
-        <span>HARMONY MENU</span>
-        <h2>ምናሌያችን</h2>
-        <p>የሚፈልጉትን ይምረጡ</p>
+        <span>OUR MENU</span>
+        <h2>ምናሌ</h2>
+        <p>ይምረጡ። ይዘዙ። ይደሰቱ።</p>
       </div>
+
+
+      <!-- FILTERS -->
 
       <div class="filters">
 
-        <button class="filter-btn active" onclick="filterMenu('all', this)">
-          ሁሉም
+        <button
+          class="filter-btn active"
+          onclick="filterMenu('all', this)">
+          All
         </button>
 
-        <button class="filter-btn" onclick="filterMenu('breakfast', this)">
-          🍳 ቁርስ
+        <button
+          class="filter-btn"
+          onclick="filterMenu('breakfast', this)">
+          🍳 Breakfast
         </button>
 
-        <button class="filter-btn" onclick="filterMenu('main', this)">
-          🍽️ ዋና ምግብ
+        <button
+          class="filter-btn"
+          onclick="filterMenu('fastfood', this)">
+          🍔 Fast Food
         </button>
 
-        <button class="filter-btn" onclick="filterMenu('coffee', this)">
-          ☕ ቡና
+        <button
+          class="filter-btn"
+          onclick="filterMenu('main', this)">
+          🍽 Main
         </button>
 
-        <button class="filter-btn" onclick="filterMenu('juice', this)">
-          🥤 ጭማቂ
+        <button
+          class="filter-btn"
+          onclick="filterMenu('coffee', this)">
+          ☕ Coffee
         </button>
 
-        <button class="filter-btn" onclick="filterMenu('snacks', this)">
-          🍔 ስናክ
+        <button
+          class="filter-btn"
+          onclick="filterMenu('juice', this)">
+          🥤 Juice
         </button>
 
       </div>
+
+
+      <!-- MENU ITEMS -->
 
       <div class="menu-grid">
 
-        <!-- BREAKFAST -->
-        <div class="menu-item" data-category="breakfast">
-          <div>
-            <h3>Special Breakfast</h3>
-            <p>እንቁላል፣ ዳቦ፣ አቮካዶ፣ ቲማቲም እና ትኩስ አትክልቶች።</p>
-          </div>
-          <div class="price">180 ETB</div>
-        </div>
+
+        <!-- =================
+             BREAKFAST
+        ================== -->
 
         <div class="menu-item" data-category="breakfast">
-          <div>
-            <h3>Fasting Breakfast</h3>
-            <p>ትኩስ አትክልቶች፣ ዳቦ እና የቤት ልዩ ጎን ምግቦች።</p>
+
+          <img
+            class="menu-image"
+            src="menu-special-breakfast.jpg"
+            alt="Special Breakfast"
+            loading="lazy"
+          >
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h3>Special Breakfast</h3>
+              <span class="price">180 ETB</span>
+            </div>
+
+            <p>
+              እንቁላል • ዳቦ • አቮካዶ
+            </p>
+
           </div>
-          <div class="price">150 ETB</div>
+
         </div>
 
-        <!-- MAIN -->
+
+        <div class="menu-item" data-category="breakfast">
+
+          <img
+            class="menu-image"
+            src="menu-fasting-breakfast.jpg"
+            alt="Fasting Breakfast"
+            loading="lazy"
+          >
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h3>Fasting Breakfast</h3>
+              <span class="price">150 ETB</span>
+            </div>
+
+            <p>
+              አትክልት • ዳቦ • ልዩ ጎን
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================
+             FAST FOOD
+        ================== -->
+
+        <div class="menu-item" data-category="fastfood">
+
+          <img
+            class="menu-image"
+            src="menu-burger.jpg"
+            alt="Harmony Burger"
+            loading="lazy"
+          >
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h3>Harmony Burger</h3>
+              <span class="price">280 ETB</span>
+            </div>
+
+            <p>
+              በሬ • አይብ • አትክልት
+            </p>
+
+          </div>
+
+        </div>
+[8/10/2026 7:58 PM] .: <div class="menu-item" data-category="fastfood">
+
+          <img
+            class="menu-image"
+            src="menu-chicken-sandwich.jpg"
+            alt="Chicken Sandwich"
+            loading="lazy"
+          >
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h3>Chicken Sandwich</h3>
+              <span class="price">250 ETB</span>
+            </div>
+
+            <p>
+              ዶሮ • አትክልት • ሶስ
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="menu-item" data-category="fastfood">
+
+          <img
+            class="menu-image"
+            src="menu-fries.jpg"
+            alt="French Fries"
+            loading="lazy"
+          >
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h3>French Fries</h3>
+              <span class="price">100 ETB</span>
+            </div>
+
+            <p>
+              ክሪስፒ • ወርቃማ
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================
+             MAIN
+        ================== -->
+
         <div class="menu-item" data-category="main">
-          <div>
-            <h3>Special Pasta</h3>
-            <p>የHarmony ልዩ ፓስታ ከአትክልትና ከቤት ልዩ ሶስ ጋር።</p>
+
+          <img
+            class="menu-image"
+            src="menu-pasta.jpg"
+            alt="Special Pasta"
+            loading="lazy"
+          >
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h3>Special Pasta</h3>
+              <span class="price">280 ETB</span>
+            </div>
+
+            <p>
+              አትክልት • ልዩ ሶስ
+            </p>
+
           </div>
-          <div class="price">280 ETB</div>
+
         </div>
+
 
         <div class="menu-item" data-category="main">
-          <div>
-            <h3>Chicken Sandwich</h3>
-            <p>የተጠበሰ ዶሮ፣ ትኩስ አትክልቶች እና ልዩ ሶስ።</p>
+
+          <img
+            class="menu-image"
+            src="menu-chicken-rice.jpg"
+            alt="Chicken Rice"
+            loading="lazy"
+          >
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h3>Chicken Rice</h3>
+              <span class="price">300 ETB</span>
+            </div>
+
+            <p>
+              ሩዝ • ዶሮ • ሰላጣ
+            </p>
+
           </div>
-          <div class="price">250 ETB</div>
+
         </div>
 
-        <div class="menu-item" data-category="main">
-          <div>
-            <h3>Chicken Rice</h3>
-            <p>በቅመም የተዘጋጀ ሩዝ ከተጠበሰ ዶሮ እና ሰላጣ ጋር።</p>
-          </div>
-          <div class="price">300 ETB</div>
-        </div>
 
-        <!-- COFFEE -->
-        <div class="menu-item" data-category="coffee">
-          <div>
-            <h3>Espresso</h3>
-            <p>ጥልቅ ጣዕም ያለው ትኩስ Espresso።</p>
-          </div>
-          <div class="price">80 ETB</div>
-        </div>
-
-        <div class="menu-item" data-category="coffee">
-          <div>
-            <h3>Macchiato</h3>
-            <p>ባህላዊ የኢትዮጵያ ዘይቤ Macchiato።</p>
-          </div>
-          <div class="price">100 ETB</div>
-        </div>
+        <!-- =================
+             COFFEE
+        ================== -->
 
         <div class="menu-item" data-category="coffee">
-          <div>
-            <h3>Cappuccino</h3>
-            <p>ክሬሚ ኤስፕሬሶ ከተጠበሰ ወተት ጋር።</p>
+
+          <img
+            class="menu-image"
+            src="menu-espresso.jpg"
+            alt="Espresso"
+            loading="lazy"
+          >
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h3>Espresso</h3>
+              <span class="price">80 ETB</span>
+            </div>
+
+            <p>
+              ጥልቅ የቡና ጣዕም
+            </p>
+
           </div>
-          <div class="price">130 ETB</div>
+
         </div>
 
-        <!-- JUICE -->
+
+        <div class="menu-item" data-category="coffee">
+
+          <img
+            class="menu-image"
+            src="menu-macchiato.jpg"
+            alt="Macchiato"
+            loading="lazy"
+          >
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h3>Macchiato</h3>
+              <span class="price">100 ETB</span>
+            </div>
+
+            <p>
+              ኤስፕሬሶ • ወተት
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="menu-item" data-category="coffee">
+
+          <img
+            class="menu-image"
+            src="menu-cappuccino.jpg"
+            alt="Cappuccino"
+            loading="lazy"
+          >
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h3>Cappuccino</h3>
+              <span class="price">130 ETB</span>
+            </div>
+
+            <p>
+              ኤስፕሬሶ • ክሬሚ ወተት
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================
+             JUICE
+        ================== -->
+
         <div class="menu-item" data-category="juice">
-          <div>
-            <h3>Fresh Mango Juice</h3>
-            <p>ከትኩስ ማንጎ የተዘጋጀ ጭማቂ።</p>
+
+          <img
+            class="menu-image"
+            src="menu-mango.jpg"
+            alt="Fresh Mango Juice"
+            loading="lazy"
+          >
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h3>Mango Juice</h3>
+              <span class="price">120 ETB</span>
+            </div>
+
+            <p>
+              ትኩስ ማንጎ
+            </p>
+
           </div>
-          <div class="price">120 ETB</div>
+
+        </div>
+[8/10/2026 7:58 PM] .: <div class="menu-item" data-category="juice">
+
+          <img
+            class="menu-image"
+            src="menu-spris.jpg"
+            alt="Special Spris"
+            loading="lazy"
+          >
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h3>Special Spris</h3>
+              <span class="price">150 ETB</span>
+            </div>
+
+            <p>
+              የተለያዩ ትኩስ ፍራፍሬዎች
+            </p>
+
+          </div>
+
         </div>
 
-        <div class="menu-item" data-category="juice">
-          <div>
-            <h3>Special Spris</h3>
-            <p>የተለያዩ ትኩስ ፍራፍሬዎች የተቀላቀሉበት ልዩ ጭማቂ።</p>
-          </div>
-          <div class="price">150 ETB</div>
-        </div>
-
-        <!-- SNACKS -->
-        <div class="menu-item" data-category="snacks">
-          <div>
-            <h3>Harmony Burger</h3>
-            <p>የበሬ ስጋ፣ አትክልቶች፣ አይብ እና የቤት ልዩ ሶስ።</p>
-          </div>
-          <div class="price">280 ETB</div>
-        </div>
-
-        <div class="menu-item" data-category="snacks">
-          <div>
-            <h3>French Fries</h3>
-            <p>ክሪስፒ ወርቃማ የድንች ቺፕስ።</p>
-          </div>
-          <div class="price">100 ETB</div>
-        </div>
 
       </div>
+
     </div>
+
   </section>
 
-  <!-- LOCATION / CONTACT -->
+
+  <!-- =========================
+       LOCATION
+  ========================= -->
+
   <section class="location-section" id="location">
+
     <div class="container">
 
       <div class="section-heading">
         <span>VISIT US</span>
-        <h2>Harmony Cafeን ይጎብኙ</h2>
-        <p>እንጠብቃችኋለን!</p>
+        <h2>Harmony Cafe</h2>
+        <p>አዳማ • ASTU Gate</p>
       </div>
+
 
       <div class="location-card">
 
-        <div>
-          <h2>📍 አድራሻችን</h2>
+        <h2>📍 የት እንገኛለን?</h2>
 
-          <p class="contact-line">
-            <strong>አድራሻ:</strong>
-            ASTU Gate አጠገብ፣ አዳማ፣ ኢትዮጵያ
-          </p>
+        <p class="contact-line">
+          ASTU Gate አጠገብ፣ አዳማ
+        </p>
 
-          <p class="contact-line">
-            <strong>ስልክ:</strong>
-            +251 911 90 31 72
-          </p>
+        <p class="contact-line">
+          📞 +251 911 90 31 72
+        </p>
 
-          <div class="buttons">
 
-            <a class="btn green"
-               href="tel:+251911903172">
-              📞 ይደውሉልን
-            </a>
+        <div class="buttons">
 
-            <!-- Replace # with your real Facebook URL -->
-            <a class="btn"
-               href="#"
-               target="_blank"
-               rel="noopener">
-              Facebook
-            </a>
+          <a
+            class="btn green"
+            href="tel:+251911903172">
+            📞 ደውል
+          </a>
 
-            <!-- Replace # with your real Instagram URL -->
-            <a class="btn gold"
-               href="#"
-               target="_blank"
-               rel="noopener">
-              Instagram
-            </a>
+          <!-- Replace # with real Facebook URL -->
 
-            <!-- Replace # with your real TikTok URL -->
-            <a class="btn green"
-               href="#"
-               target="_blank"
-               rel="noopener">
-              TikTok
-            </a>
+          <a
+            class="btn"
+            href="#"
+            target="_blank"
+            rel="noopener">
+            Facebook
+          </a>
 
-          </div>
+
+          <!-- Replace # with real Instagram URL -->
+
+          <a
+            class="btn gold"
+            href="#"
+            target="_blank"
+            rel="noopener">
+            Instagram
+          </a>
+
+
+          <!-- Replace # with real TikTok URL -->
+
+          <a
+            class="btn green"
+            href="#"
+            target="_blank"
+            rel="noopener">
+            TikTok
+          </a>
+
         </div>
 
       </div>
+
     </div>
+
   </section>
 
-  <!-- FOOTER -->
+
+  <!-- =========================
+       FOOTER
+  ========================= -->
+
   <footer>
-    <strong>HARMONY CAFE • ሃርሞኒ ካፌ</strong>
-    <small>Good Food • Good Coffee • Good Vibes</small>
-    <small>© <span id="year"></span> Harmony Cafe. All Rights Reserved.</small>
+
+    <strong>
+      HARMONY CAFE • ሃርሞኒ ካፌ
+    </strong>
+
+    <small>
+      Good Food • Good Coffee • Good Vibes
+    </small>
+
+    <small>
+      © <span id="year"></span> Harmony Cafe
+    </small>
+
   </footer>
 
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================= -->
+
   <script>
+
     // MENU FILTER
+
     function filterMenu(category, button) {
 
-      const items = document.querySelectorAll(".menu-item");
-      const buttons = document.querySelectorAll(".filter-btn");
+      const items =
+        document.querySelectorAll(".menu-item");
 
-      buttons.forEach(btn => btn.classList.remove("active"));
+      const buttons =
+        document.querySelectorAll(".filter-btn");
+
+
+      buttons.forEach(btn => {
+        btn.classList.remove("active");
+      });
+
+
       button.classList.add("active");
+
 
       items.forEach(item => {
 
-        if (category === "all" ||
-            item.dataset.category === category) {
+        if (
+          category === "all" ||
+          item.dataset.category === category
+        ) {
 
           item.classList.remove("hidden");
 
@@ -864,21 +1257,36 @@
         }
 
       });
+
     }
+
 
     // MOBILE NAVIGATION
+
     function toggleNav() {
-      document.getElementById("navLinks").classList.toggle("open");
+
+      document
+        .getElementById("navLinks")
+        .classList.toggle("open");
+
     }
+
 
     function closeNav() {
-      document.getElementById("navLinks").classList.remove("open");
+
+      document
+        .getElementById("navLinks")
+        .classList.remove("open");
+
     }
 
+
     // CURRENT YEAR
+
     document.getElementById("year").textContent =
       new Date().getFullYear();
+
   </script>
 
 </body>
-</html>
+</html> 
