@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Harmony Cafe | Digital Menu</title>
+
+  <!-- QR Code library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --green: #087f5b;
+      --dark-green: #075c43;
+      --red: #7d001b;
+      --cream: #fffaf3;
+      --white: #ffffff;
+      --text: #252525;
+      --muted: #777;
+      --gold: #d6a84f;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+    }
+
+    /* HEADER */
+    .hero {
+      background:
+        linear-gradient(135deg, rgba(7,92,67,.97), rgba(125,0,27,.94));
+      color: white;
+      text-align: center;
+      padding: 35px 20px 45px;
+      border-radius: 0 0 35px 35px;
+    }
+
+    .logo {
+      width: 145px;
+      height: 145px;
+      object-fit: contain;
+      background: white;
+      border-radius: 50%;
+      padding: 8px;
+      margin-bottom: 15px;
+    }
+
+    .hero h1 {
+      font-size: 38px;
+      letter-spacing: 2px;
+    }
+
+    .hero p {
+      margin-top: 8px;
+      opacity: .9;
+      font-size: 16px;
+    }
+
+    .location {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    /* NAVIGATION */
+    .categories {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 15px;
+      background: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    }
+
+    .categories button {
+      border: 0;
+      background: #eee;
+      padding: 10px 17px;
+      border-radius: 25px;
+      white-space: nowrap;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .categories button.active {
+      background: var(--green);
+      color: white;
+    }
+
+    /* MENU */
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 25px 15px 50px;
+    }
+
+    .section-title {
+      text-align: center;
+      color: var(--dark-green);
+      margin: 15px 0 25px;
+      font-size: 27px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+    }
+
+    .menu-item {
+      background: white;
+      padding: 18px;
+      border-radius: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.07);
+      border-left: 4px solid var(--green);
+    }
+
+    .menu-item h3 {
+      color: var(--red);
+      margin-bottom: 7px;
+    }
+
+    .menu-item p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .price {
+      color: var(--green);
+      font-weight: bold;
+      white-space: nowrap;
+      font-size: 17px;
+    }
+
+    /* CONTACT */
+    .contact {
+      background: var(--dark-green);
+      color: white;
+      padding: 35px 20px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .contact h2 {
+      margin-bottom: 15px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 25px;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      background: var(--red);
+    }
+
+    .btn.green {
+      background: #10a86d;
+    }
+
+    .btn.gold {
+      background: var(--gold);
+      color: #222;
+    }
+
+    /* QR */
+    .qr-section {
+      text-align: center;
+      background: white;
+      padding: 35px 20px;
+    }
+
+    #qrcode {
+      display: inline-block;
+      padding: 15px;
+      background: white;
+      border-radius: 15px;
+      margin-top: 15px;
+      box-shadow: 0 3px 15px rgba(0,0,0,.12);
+    }
+
+    footer {
+      background: #073e30;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 13px;
+    }
+
+    @media(max-width: 500px) {
+      .hero h1 {
+        font-size: 31px;
+      }
+
+      .logo {
+        width: 125px;
+        height: 125px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+
+    <!-- Your uploaded logo -->
+    <img src="harmony-logo.jpg"
+         alt="Harmony Cafe Logo"
+         class="logo">
+
+    <h1>HARMONY CAFE</h1>
+
+    <p>Good Food • Good Coffee • Good Vibes</p>
+
+    <div class="location">
+      📍 Adama, Ethiopia — Near ASTU Gate
+    </div>
+
+  </header>
+
+
+  <!-- CATEGORY FILTER -->
+  <nav class="categories">
+
+    <button class="active" onclick="filterMenu('all', this)">
+      All
+    </button>
+
+    <button onclick="filterMenu('breakfast', this)">
+      🍳 Breakfast
+    </button>
+
+    <button onclick="filterMenu('main', this)">
+      🍽️ Main
+    </button>
+
+    <button onclick="filterMenu('coffee', this)">
+      ☕ Coffee
+    </button>
+
+    <button onclick="filterMenu('juice', this)">
+      🥤 Juice
+    </button>
+
+    <button onclick="filterMenu('snacks', this)">
+      🍔 Snacks
+    </button>
+
+  </nav>
+
+
+  <!-- MENU -->
+  <main class="container">
+
+    <h2 class="section-title">
+      Our Menu
+    </h2>
+
+    <div class="menu-grid">
+
+      <!-- BREAKFAST -->
+
+      <div class="menu-item" data-category="breakfast">
+        <div>
+          <h3>Special Breakfast</h3>
+          <p>Eggs, bread, avocado, tomato and fresh vegetables.</p>
+        </div>
+        <div class="price">180 ETB</div>
+      </div>
+
+      <div class="menu-item" data-category="breakfast">
+        <div>
+          <h3>Fasting Breakfast</h3>
+          <p>Fresh vegetables, bread and house special sides.</p>
+        </div>
+        <div class="price">150 ETB</div>
+      </div>
+
+      <!-- MAIN -->
+
+      <div class="menu-item" data-category="main">
+        <div>
+          <h3>Special Pasta</h3>
+          <p>Harmony special pasta with vegetables and house sauce.</p>
+        </div>
+        <div class="price">280 ETB</div>
+      </div>
+
+      <div class="menu-item" data-category="main">
+        <div>
+          <h3>Chicken Sandwich</h3>
+          <p>Grilled chicken, fresh vegetables and special sauce.</p>
+        </div>
+        <div class="price">250 ETB</div>
+      </div>
+
+      <div class="menu-item" data-category="main">
+        <div>
+          <h3>Chicken Rice</h3>
+          <p>Seasoned rice served with grilled chicken and salad.</p>
+        </div>
+        <div class="price">300 ETB</div>
+      </div>
+
+      <!-- COFFEE -->
+
+      <div class="menu-item" data-category="coffee">
+        <div>
+          <h3>Espresso</h3>
+          <p>Rich and freshly brewed espresso.</p>
+        </div>
+        <div class="price">80 ETB</div>
+      </div>
+
+      <div class="menu-item" data-category="coffee">
+        <div>
+          <h3>Macchiato</h3>
+          <p>Classic Ethiopian-style macchiato.</p>
+        </div>
+        <div class="price">100 ETB</div>
+      </div>
+
+      <div class="menu-item" data-category="coffee">
+        <div>
+          <h3>Cappuccino</h3>
+          <p>Creamy espresso with steamed milk.</p>
+        </div>
+        <div class="price">130 ETB</div>
+      </div>
+
+      <!-- JUICE -->
+
+      <div class="menu-item" data-category="juice">
+        <div>
+          <h3>Fresh Mango Juice</h3>
+          <p>Freshly prepared mango juice.</p>
+        </div>
+        <div class="price">120 ETB</div>
+      </div>
+
+      <div class="menu-item" data-category="juice">
+        <div>
+          <h3>Special Spris</h3>
+          <p>Our colorful mixed fresh-fruit juice.</p>
+        </div>
+        <div class="price">150 ETB</div>
+      </div>
+
+      <!-- SNACKS -->
+
+      <div class="menu-item" data-category="snacks">
+        <div>
+          <h3>Harmony Burger</h3>
+          <p>Beef burger, vegetables, cheese and house sauce.</p>
+        </div>
+        <div class="price">280 ETB</div>
+      </div>
+
+      <div class="menu-item" data-category="snacks">
+        <div>
+          <h3>French Fries</h3>
+          <p>Crispy golden fries.</p>
+        </div>
+        <div class="price">100 ETB</div>
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- CONTACT -->
+  <section class="contact">
+
+    <h2>Visit Harmony Cafe</h2>
+
+    <p>
+      📍 Near ASTU Gate, Adama, Ethiopia
+    </p>
+
+    <p style="margin-top:8px;">
+      📞 +251 911 90 31 72
+    </p>
+
+    <div class="buttons">
+
+      <!-- Phone -->
+      <a class="btn green"
+         href="tel:+251911903172">
+        📞 Call Us
+      </a>
+
+      <!-- Replace # with actual social links -->
+      <a class="btn"
+         href="#"
+         target="_blank">
+        Facebook
+      </a>
+
+      <a class="btn gold"
+         href="#"
+         target="_blank">
+        Instagram
+      </a>
+
+      <a class="btn green"
+         href="#"
+         target="_blank">
+        TikTok
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- QR CODE -->
+  <section class="qr-section">
+
+    <h2>Scan to View Our Menu</h2>
+
+    <p style="margin-top:8px;color:#777;">
+      Put this QR code on your tables, counter and receipts.
+    </p>
+
+    <div id="qrcode"></div>
+
+  </section>
+
+
+  <footer>
+    © 2026 Harmony Cafe — Adama, Ethiopia
+  </footer>
+
+
+  <script>
+
+    /*
+      MENU FILTER
+    */
+
+    function filterMenu(category, button) {
+
+      const items =
+        document.querySelectorAll(".menu-item");
+
+      const buttons =
+        document.querySelectorAll(".categories button");
+
+      buttons.forEach(btn => {
+        btn.classList.remove("active");
+      });
+
+      button.classList.add("active");
+
+      items.forEach(item => {
+
+        if (
+          category === "all" ||
+          item.dataset.category === category
+        ) {
+
+          item.style.display = "flex";
+
+        } else {
+
+          item.style.display = "none";
+
+        }
+
+      });
+
+    }
+
+
+    /*
+      QR CODE
+
+      IMPORTANT:
+      After you publish the website, replace
+      the URL below with your real menu URL.
+    */
+
+    const menuURL =
+      "https://YOUR-DOMAIN.com";
+
+    new QRCode(
+      document.getElementById("qrcode"),
+      {
+        text: menuURL,
+        width: 180,
+        height: 180,
+        colorDark: "#075c43",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      }
+    );
+
+  </script>
+
+</body>
+</html>
