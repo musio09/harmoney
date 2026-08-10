@@ -1,24 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="am">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Harmony Cafe | Digital Menu</title>
+  <title>Harmony Cafe | ሃርሞኒ ካፌ</title>
 
-  <!-- QR Code library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Ethiopian/Amharic-friendly font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --green: #087f5b;
-      --dark-green: #075c43;
-      --red: #7d001b;
-      --cream: #fffaf3;
+      --burgundy: #7b1025;
+      --burgundy-dark: #5b0719;
+      --green: #087443;
+      --green-dark: #055c35;
+      --cream: #fbfaf6;
       --white: #ffffff;
+      --soft: #f4f1e9;
       --text: #252525;
-      --muted: #777;
-      --gold: #d6a84f;
+      --muted: #6c6c6c;
+      --border: #e6e0d4;
+      --gold: #b28a42;
+      --shadow: 0 10px 30px rgba(45, 30, 20, .08);
     }
 
     * {
@@ -27,197 +33,484 @@
       padding: 0;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: "Noto Sans Ethiopic", "Segoe UI", Arial, sans-serif;
       background: var(--cream);
       color: var(--text);
+      line-height: 1.7;
     }
 
-    /* HEADER */
-    .hero {
-      background:
-        linear-gradient(135deg, rgba(7,92,67,.97), rgba(125,0,27,.94));
-      color: white;
-      text-align: center;
-      padding: 35px 20px 45px;
-      border-radius: 0 0 35px 35px;
-    }
-
-    .logo {
-      width: 145px;
-      height: 145px;
-      object-fit: contain;
-      background: white;
-      border-radius: 50%;
-      padding: 8px;
-      margin-bottom: 15px;
-    }
-
-    .hero h1 {
-      font-size: 38px;
-      letter-spacing: 2px;
-    }
-
-    .hero p {
-      margin-top: 8px;
-      opacity: .9;
-      font-size: 16px;
-    }
-
-    .location {
-      margin-top: 15px;
-      font-size: 14px;
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
     /* NAVIGATION */
-    .categories {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 15px;
-      background: white;
+    nav {
       position: sticky;
       top: 0;
-      z-index: 10;
-      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+      z-index: 1000;
+      background: rgba(255,255,255,.96);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
     }
 
-    .categories button {
+    .nav-inner {
+      max-width: 1150px;
+      margin: auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      color: var(--burgundy);
+    }
+
+    .nav-brand img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 22px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .nav-links a:hover {
+      color: var(--green);
+    }
+
+    .menu-toggle {
+      display: none;
       border: 0;
-      background: #eee;
-      padding: 10px 17px;
-      border-radius: 25px;
-      white-space: nowrap;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .categories button.active {
       background: var(--green);
       color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 650px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 70px 20px;
+      background:
+        radial-gradient(circle at top, rgba(123,16,37,.05), transparent 40%),
+        linear-gradient(180deg, #fff 0%, var(--cream) 100%);
+    }
+
+    .hero-content {
+      max-width: 850px;
+    }
+
+    .logo {
+      width: 190px;
+      height: 190px;
+      object-fit: contain;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 8px 14px rgba(0,0,0,.08));
+    }
+
+    .eyebrow {
+      color: var(--green);
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .hero h1 {
+      color: var(--burgundy);
+      font-size: clamp(42px, 7vw, 78px);
+      line-height: 1.05;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+      font-weight: 800;
+    }
+
+    .hero h2 {
+      color: var(--green-dark);
+      font-size: clamp(22px, 4vw, 34px);
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .hero-buttons {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--burgundy);
+      font-weight: 700;
+      transition: .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .btn.green {
+      background: var(--green);
+      color: white;
+      border-color: var(--green);
+    }
+
+    .btn.red {
+      background: var(--burgundy);
+      color: white;
+      border-color: var(--burgundy);
+    }
+
+    .btn.gold {
+      border-color: var(--gold);
+      color: #7b5b1e;
+    }
+
+    /* SECTIONS */
+    section {
+      padding: 75px 20px;
+    }
+
+    .container {
+      max-width: 1150px;
+      margin: auto;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .section-heading span {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .section-heading h2 {
+      color: var(--burgundy);
+      font-size: 36px;
+      margin-top: 5px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    /* ABOUT */
+    .about {
+      background: white;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 35px;
+      align-items: center;
+    }
+
+    .about-card {
+      background: var(--soft);
+      padding: 35px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+    }
+
+    .about-card h3 {
+      color: var(--burgundy);
+      font-size: 25px;
+      margin-bottom: 12px;
+    }
+
+    .about-card p {
+      color: #555;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .feature {
+      padding: 22px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .feature strong {
+      display: block;
+      color: var(--green);
+      margin-bottom: 4px;
     }
 
     /* MENU */
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 25px 15px 50px;
+    .menu-section {
+      background: var(--cream);
     }
 
-    .section-title {
-      text-align: center;
-      color: var(--dark-green);
-      margin: 15px 0 25px;
-      font-size: 27px;
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 9px;
+      margin-bottom: 32px;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--border);
+      background: white;
+      color: #333;
+      padding: 10px 17px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      transition: .2s;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--green);
+      color: white;
+      border-color: var(--green);
     }
 
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 15px;
     }
 
     .menu-item {
-      background: white;
-      padding: 18px;
-      border-radius: 18px;
       display: flex;
       justify-content: space-between;
-      gap: 15px;
-      box-shadow: 0 3px 12px rgba(0,0,0,.07);
-      border-left: 4px solid var(--green);
+      gap: 18px;
+      background: white;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 5px 18px rgba(0,0,0,.035);
+      transition: .2s;
+    }
+
+    .menu-item:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: rgba(8,116,67,.25);
     }
 
     .menu-item h3 {
-      color: var(--red);
-      margin-bottom: 7px;
+      color: var(--burgundy);
+      font-size: 19px;
+      margin-bottom: 4px;
     }
 
     .menu-item p {
       color: var(--muted);
       font-size: 14px;
-      line-height: 1.4;
     }
 
     .price {
+      flex: 0 0 auto;
       color: var(--green);
-      font-weight: bold;
+      font-weight: 800;
       white-space: nowrap;
       font-size: 17px;
     }
 
-    /* CONTACT */
-    .contact {
-      background: var(--dark-green);
-      color: white;
-      padding: 35px 20px;
-      text-align: center;
-      margin-top: 20px;
+    .menu-item.hidden {
+      display: none;
     }
 
-    .contact h2 {
-      margin-bottom: 15px;
+    /* LOCATION */
+    .location-section {
+      background: white;
+    }
+
+    .location-card {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 30px;
+      align-items: center;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      padding: 35px;
+      border-radius: 20px;
+    }
+
+    .location-card h2 {
+      color: var(--burgundy);
+      margin-bottom: 10px;
+      font-size: 30px;
+    }
+
+    .contact-line {
+      margin: 10px 0;
+      color: #444;
+    }
+
+    .contact-line strong {
+      color: var(--green);
     }
 
     .buttons {
       display: flex;
-      justify-content: center;
       flex-wrap: wrap;
       gap: 10px;
-      margin-top: 20px;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 12px 20px;
-      border-radius: 25px;
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-      background: var(--red);
-    }
-
-    .btn.green {
-      background: #10a86d;
-    }
-
-    .btn.gold {
-      background: var(--gold);
-      color: #222;
+      margin-top: 22px;
     }
 
     /* QR */
-    .qr-section {
+    .qr-box {
       text-align: center;
       background: white;
-      padding: 35px 20px;
+      padding: 22px;
+      border-radius: 18px;
+      border: 2px solid var(--green);
     }
 
-    #qrcode {
-      display: inline-block;
-      padding: 15px;
-      background: white;
-      border-radius: 15px;
-      margin-top: 15px;
-      box-shadow: 0 3px 15px rgba(0,0,0,.12);
+    .qr-box img {
+      width: min(300px, 100%);
+      height: auto;
+      image-rendering: pixelated;
+      display: block;
+      margin: 0 auto 10px;
     }
 
-    footer {
-      background: #073e30;
-      color: white;
-      text-align: center;
-      padding: 20px;
+    .qr-box h3 {
+      color: var(--burgundy);
+      margin-bottom: 3px;
+    }
+
+    .qr-box p {
+      color: var(--muted);
       font-size: 13px;
     }
 
-    @media(max-width: 500px) {
-      .hero h1 {
-        font-size: 31px;
+    /* FOOTER */
+    footer {
+      background: var(--burgundy);
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    footer strong {
+      color: white;
+    }
+
+    footer small {
+      display: block;
+      margin-top: 5px;
+      opacity: .8;
+    }
+
+    /* MOBILE */
+    @media (max-width: 800px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 72px;
+        background: white;
+        border-bottom: 1px solid var(--border);
+        padding: 18px 20px;
+        flex-direction: column;
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .about-grid,
+      .location-card {
+        grid-template-columns: 1fr;
+      }
+
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: 580px;
       }
 
       .logo {
-        width: 125px;
-        height: 125px;
+        width: 155px;
+        height: 155px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      section {
+        padding: 55px 15px;
+      }
+
+      .hero {
+        padding: 55px 15px;
+      }
+
+      .menu-item {
+        padding: 17px;
+      }
+
+      .location-card,
+      .about-card {
+        padding: 22px;
       }
     }
   </style>
@@ -225,268 +518,385 @@
 
 <body>
 
-  <!-- HERO -->
-  <header class="hero">
+  <!-- NAVIGATION -->
+  <nav>
+    <div class="nav-inner">
 
-    <!-- Your uploaded logo -->
-    <img src="harmony-logo.jpg"
-         alt="Harmony Cafe Logo"
-         class="logo">
+      <a href="#home" class="nav-brand">
+        <img src="harmony-logo.jpg" alt="Harmony Cafe Logo">
+        <span>Harmony Cafe</span>
+      </a>
 
-    <h1>HARMONY CAFE</h1>
+      <button class="menu-toggle" onclick="toggleNav()" aria-label="Open menu">
+        ☰
+      </button>
 
-    <p>Good Food • Good Coffee • Good Vibes</p>
+      <div class="nav-links" id="navLinks">
+        <a href="#home" onclick="closeNav()">መነሻ</a>
+        <a href="#about" onclick="closeNav()">ስለ እኛ</a>
+        <a href="#menu" onclick="closeNav()">ምናሌ</a>
+        <a href="#location" onclick="closeNav()">አድራሻ</a>
+      </div>
 
-    <div class="location">
-      📍 Adama, Ethiopia — Near ASTU Gate
     </div>
-
-  </header>
-
-
-  <!-- CATEGORY FILTER -->
-  <nav class="categories">
-
-    <button class="active" onclick="filterMenu('all', this)">
-      All
-    </button>
-
-    <button onclick="filterMenu('breakfast', this)">
-      🍳 Breakfast
-    </button>
-
-    <button onclick="filterMenu('main', this)">
-      🍽️ Main
-    </button>
-
-    <button onclick="filterMenu('coffee', this)">
-      ☕ Coffee
-    </button>
-
-    <button onclick="filterMenu('juice', this)">
-      🥤 Juice
-    </button>
-
-    <button onclick="filterMenu('snacks', this)">
-      🍔 Snacks
-    </button>
-
   </nav>
 
+  <!-- HERO -->
+  <header class="hero" id="home">
+    <div class="hero-content">
 
-  <!-- MENU -->
-  <main class="container">
+      <img
+        src="harmony-logo.jpg"
+        alt="Harmony Cafe Logo"
+        class="logo"
+      >
 
-    <h2 class="section-title">
-      Our Menu
-    </h2>
+      <div class="eyebrow">እንኳን ወደ Harmony Cafe በሰላም መጡ</div>
 
-    <div class="menu-grid">
+      <h1>HARMONY CAFE</h1>
 
-      <!-- BREAKFAST -->
+      <h2>ሃርሞኒ ካፌ</h2>
 
-      <div class="menu-item" data-category="breakfast">
-        <div>
-          <h3>Special Breakfast</h3>
-          <p>Eggs, bread, avocado, tomato and fresh vegetables.</p>
-        </div>
-        <div class="price">180 ETB</div>
-      </div>
+      <p>
+        Good Food • Good Coffee • Good Vibes
+      </p>
 
-      <div class="menu-item" data-category="breakfast">
-        <div>
-          <h3>Fasting Breakfast</h3>
-          <p>Fresh vegetables, bread and house special sides.</p>
-        </div>
-        <div class="price">150 ETB</div>
-      </div>
+      <p>
+        ጥሩ ምግብ • ጥሩ ቡና • ጥሩ ድባብ
+      </p>
 
-      <!-- MAIN -->
-
-      <div class="menu-item" data-category="main">
-        <div>
-          <h3>Special Pasta</h3>
-          <p>Harmony special pasta with vegetables and house sauce.</p>
-        </div>
-        <div class="price">280 ETB</div>
-      </div>
-
-      <div class="menu-item" data-category="main">
-        <div>
-          <h3>Chicken Sandwich</h3>
-          <p>Grilled chicken, fresh vegetables and special sauce.</p>
-        </div>
-        <div class="price">250 ETB</div>
-      </div>
-
-      <div class="menu-item" data-category="main">
-        <div>
-          <h3>Chicken Rice</h3>
-          <p>Seasoned rice served with grilled chicken and salad.</p>
-        </div>
-        <div class="price">300 ETB</div>
-      </div>
-
-      <!-- COFFEE -->
-
-      <div class="menu-item" data-category="coffee">
-        <div>
-          <h3>Espresso</h3>
-          <p>Rich and freshly brewed espresso.</p>
-        </div>
-        <div class="price">80 ETB</div>
-      </div>
-
-      <div class="menu-item" data-category="coffee">
-        <div>
-          <h3>Macchiato</h3>
-          <p>Classic Ethiopian-style macchiato.</p>
-        </div>
-        <div class="price">100 ETB</div>
-      </div>
-
-      <div class="menu-item" data-category="coffee">
-        <div>
-          <h3>Cappuccino</h3>
-          <p>Creamy espresso with steamed milk.</p>
-        </div>
-        <div class="price">130 ETB</div>
-      </div>
-
-      <!-- JUICE -->
-
-      <div class="menu-item" data-category="juice">
-        <div>
-          <h3>Fresh Mango Juice</h3>
-          <p>Freshly prepared mango juice.</p>
-        </div>
-        <div class="price">120 ETB</div>
-      </div>
-
-      <div class="menu-item" data-category="juice">
-        <div>
-          <h3>Special Spris</h3>
-          <p>Our colorful mixed fresh-fruit juice.</p>
-        </div>
-        <div class="price">150 ETB</div>
-      </div>
-
-      <!-- SNACKS -->
-
-      <div class="menu-item" data-category="snacks">
-        <div>
-          <h3>Harmony Burger</h3>
-          <p>Beef burger, vegetables, cheese and house sauce.</p>
-        </div>
-        <div class="price">280 ETB</div>
-      </div>
-
-      <div class="menu-item" data-category="snacks">
-        <div>
-          <h3>French Fries</h3>
-          <p>Crispy golden fries.</p>
-        </div>
-        <div class="price">100 ETB</div>
+      <div class="hero-buttons">
+        <a href="#menu" class="btn green">🍽️ ምናሌያችንን ይመልከቱ</a>
+        <a href="tel:+251911903172" class="btn red">📞 ይደውሉልን</a>
       </div>
 
     </div>
+  </header>
 
-  </main>
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="container">
 
+      <div class="section-heading">
+        <span>WELCOME</span>
+        <h2>ስለ Harmony Cafe</h2>
+        <p>የሚያስደስት ምግብ፣ ቡና እና የተረጋጋ ድባብ</p>
+      </div>
 
-  <!-- CONTACT -->
-  <section class="contact">
+      <div class="about-grid">
 
-    <h2>Visit Harmony Cafe</h2>
+        <div class="about-card">
+          <h3>በ Harmony Cafe ይደሰቱ</h3>
 
-    <p>
-      📍 Near ASTU Gate, Adama, Ethiopia
-    </p>
+          <p>
+            Harmony Cafe በአዳማ የሚገኝ የምግብና የቡና መዝናኛ ቦታ ነው።
+            በጥራት የተዘጋጀ ምግብ፣ ትኩስ ቡና፣ ጭማቂ እና
+            የተለያዩ ስናክሶችን እናቀርባለን።
+          </p>
 
-    <p style="margin-top:8px;">
-      📞 +251 911 90 31 72
-    </p>
+          <p style="margin-top:15px;">
+            ከጓደኞችዎ ጋር ለመዝናናት፣ ለቤተሰብ ጊዜ ወይም
+            ለጥሩ ቡና ጊዜዎን በHarmony Cafe ያሳልፉ።
+          </p>
+        </div>
 
-    <div class="buttons">
+        <div class="features">
 
-      <!-- Phone -->
-      <a class="btn green"
-         href="tel:+251911903172">
-        📞 Call Us
-      </a>
+          <div class="feature">
+            <strong>☕ ትኩስ ቡና</strong>
+            ትኩስ እና ጥራት ያለው ቡና።
+          </div>
 
-      <!-- Replace # with actual social links -->
-      <a class="btn"
-         href="#"
-         target="_blank">
-        Facebook
-      </a>
+          <div class="feature">
+            <strong>🍽️ ጥራት ያለው ምግብ</strong>
+            በጥንቃቄ የተዘጋጀ ምግብ።
+          </div>
 
-      <a class="btn gold"
-         href="#"
-         target="_blank">
-        Instagram
-      </a>
+          <div class="feature">
+            <strong>🥤 ትኩስ ጭማቂ</strong>
+            ከትኩስ ፍራፍሬ የተዘጋጀ።
+          </div>
 
-      <a class="btn green"
-         href="#"
-         target="_blank">
-        TikTok
-      </a>
+          <div class="feature">
+            <strong>🤝 ምቹ አገልግሎት</strong>
+            ለደንበኞቻችን ምቹ አገልግሎት።
+          </div>
 
+        </div>
+      </div>
     </div>
-
   </section>
 
+  <!-- MENU -->
+  <section class="menu-section" id="menu">
+    <div class="container">
 
+      <div class="section-heading">
+        <span>HARMONY MENU</span>
+        <h2>ምናሌያችን</h2>
+        <p>የሚፈልጉትን ይምረጡ</p>
+      </div>
 
+      <div class="filters">
 
+        <button class="filter-btn active" onclick="filterMenu('all', this)">
+          ሁሉም
+        </button>
 
+        <button class="filter-btn" onclick="filterMenu('breakfast', this)">
+          🍳 ቁርስ
+        </button>
+
+        <button class="filter-btn" onclick="filterMenu('main', this)">
+          🍽️ ዋና ምግብ
+        </button>
+
+        <button class="filter-btn" onclick="filterMenu('coffee', this)">
+          ☕ ቡና
+        </button>
+
+        <button class="filter-btn" onclick="filterMenu('juice', this)">
+          🥤 ጭማቂ
+        </button>
+
+        <button class="filter-btn" onclick="filterMenu('snacks', this)">
+          🍔 ስናክ
+        </button>
+
+      </div>
+
+      <div class="menu-grid">
+
+        <!-- BREAKFAST -->
+        <div class="menu-item" data-category="breakfast">
+          <div>
+            <h3>Special Breakfast</h3>
+            <p>እንቁላል፣ ዳቦ፣ አቮካዶ፣ ቲማቲም እና ትኩስ አትክልቶች።</p>
+          </div>
+          <div class="price">180 ETB</div>
+        </div>
+
+        <div class="menu-item" data-category="breakfast">
+          <div>
+            <h3>Fasting Breakfast</h3>
+            <p>ትኩስ አትክልቶች፣ ዳቦ እና የቤት ልዩ ጎን ምግቦች።</p>
+          </div>
+          <div class="price">150 ETB</div>
+        </div>
+
+        <!-- MAIN -->
+        <div class="menu-item" data-category="main">
+          <div>
+            <h3>Special Pasta</h3>
+            <p>የHarmony ልዩ ፓስታ ከአትክልትና ከቤት ልዩ ሶስ ጋር።</p>
+          </div>
+          <div class="price">280 ETB</div>
+        </div>
+
+        <div class="menu-item" data-category="main">
+          <div>
+            <h3>Chicken Sandwich</h3>
+            <p>የተጠበሰ ዶሮ፣ ትኩስ አትክልቶች እና ልዩ ሶስ።</p>
+          </div>
+          <div class="price">250 ETB</div>
+        </div>
+
+        <div class="menu-item" data-category="main">
+          <div>
+            <h3>Chicken Rice</h3>
+            <p>በቅመም የተዘጋጀ ሩዝ ከተጠበሰ ዶሮ እና ሰላጣ ጋር።</p>
+          </div>
+          <div class="price">300 ETB</div>
+        </div>
+
+        <!-- COFFEE -->
+        <div class="menu-item" data-category="coffee">
+          <div>
+            <h3>Espresso</h3>
+            <p>ጥልቅ ጣዕም ያለው ትኩስ Espresso።</p>
+          </div>
+          <div class="price">80 ETB</div>
+        </div>
+
+        <div class="menu-item" data-category="coffee">
+          <div>
+            <h3>Macchiato</h3>
+            <p>ባህላዊ የኢትዮጵያ ዘይቤ Macchiato።</p>
+          </div>
+          <div class="price">100 ETB</div>
+        </div>
+
+        <div class="menu-item" data-category="coffee">
+          <div>
+            <h3>Cappuccino</h3>
+            <p>ክሬሚ ኤስፕሬሶ ከተጠበሰ ወተት ጋር።</p>
+          </div>
+          <div class="price">130 ETB</div>
+        </div>
+
+        <!-- JUICE -->
+        <div class="menu-item" data-category="juice">
+          <div>
+            <h3>Fresh Mango Juice</h3>
+            <p>ከትኩስ ማንጎ የተዘጋጀ ጭማቂ።</p>
+          </div>
+          <div class="price">120 ETB</div>
+        </div>
+
+        <div class="menu-item" data-category="juice">
+          <div>
+            <h3>Special Spris</h3>
+            <p>የተለያዩ ትኩስ ፍራፍሬዎች የተቀላቀሉበት ልዩ ጭማቂ።</p>
+          </div>
+          <div class="price">150 ETB</div>
+        </div>
+
+        <!-- SNACKS -->
+        <div class="menu-item" data-category="snacks">
+          <div>
+            <h3>Harmony Burger</h3>
+            <p>የበሬ ስጋ፣ አትክልቶች፣ አይብ እና የቤት ልዩ ሶስ።</p>
+          </div>
+          <div class="price">280 ETB</div>
+        </div>
+
+        <div class="menu-item" data-category="snacks">
+          <div>
+            <h3>French Fries</h3>
+            <p>ክሪስፒ ወርቃማ የድንች ቺፕስ።</p>
+          </div>
+          <div class="price">100 ETB</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- LOCATION / CONTACT -->
+  <section class="location-section" id="location">
+    <div class="container">
+
+      <div class="section-heading">
+        <span>VISIT US</span>
+        <h2>Harmony Cafeን ይጎብኙ</h2>
+        <p>እንጠብቃችኋለን!</p>
+      </div>
+
+      <div class="location-card">
+
+        <div>
+          <h2>📍 አድራሻችን</h2>
+
+          <p class="contact-line">
+            <strong>አድራሻ:</strong>
+            ASTU Gate አጠገብ፣ አዳማ፣ ኢትዮጵያ
+          </p>
+
+          <p class="contact-line">
+            <strong>ስልክ:</strong>
+            +251 911 90 31 72
+          </p>
+
+          <div class="buttons">
+
+            <a class="btn green"
+               href="tel:+251911903172">
+              📞 ይደውሉልን
+            </a>
+
+            <!-- Replace # with your real Facebook URL -->
+            <a class="btn"
+               href="#"
+               target="_blank"
+               rel="noopener">
+              Facebook
+            </a>
+
+            <!-- Replace # with your real Instagram URL -->
+            <a class="btn gold"
+               href="#"
+               target="_blank"
+               rel="noopener">
+              Instagram
+            </a>
+
+            <!-- Replace # with your real TikTok URL -->
+            <a class="btn green"
+               href="#"
+               target="_blank"
+               rel="noopener">
+              TikTok
+            </a>
+
+          </div>
+        </div>
+
+        <div class="qr-box">
+
+          <!--
+            IMPORTANT:
+            Put your EXACT QR image in the same folder as this HTML
+            and name it: qr-code.png
+
+            This image should be the original QR you uploaded.
+          -->
+          <img src="qr-code.png"
+               alt="Harmony Cafe QR Code">
+
+          <h3>QR Code</h3>
+          <p>QR ኮዱን ስካን በማድረግ Harmony Cafeን ይጎብኙ።</p>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
   <footer>
-    © 2026 Harmony Cafe — Adama, Ethiopia
+    <strong>HARMONY CAFE • ሃርሞኒ ካፌ</strong>
+    <small>Good Food • Good Coffee • Good Vibes</small>
+    <small>© <span id="year"></span> Harmony Cafe. All Rights Reserved.</small>
   </footer>
 
-
   <script>
-
-    /*
-      MENU FILTER
-    */
-
+    // MENU FILTER
     function filterMenu(category, button) {
 
-      const items =
-        document.querySelectorAll(".menu-item");
+      const items = document.querySelectorAll(".menu-item");
+      const buttons = document.querySelectorAll(".filter-btn");
 
-      const buttons =
-        document.querySelectorAll(".categories button");
-
-      buttons.forEach(btn => {
-        btn.classList.remove("active");
-      });
-
+      buttons.forEach(btn => btn.classList.remove("active"));
       button.classList.add("active");
 
       items.forEach(item => {
 
-        if (
-          category === "all" ||
-          item.dataset.category === category
-        ) {
+        if (category === "all" ||
+            item.dataset.category === category) {
 
-          item.style.display = "flex";
+          item.classList.remove("hidden");
 
         } else {
 
-          item.style.display = "none";
+          item.classList.add("hidden");
 
         }
 
       });
-
     }
 
+    // MOBILE NAVIGATION
+    function toggleNav() {
+      document.getElementById("navLinks").classList.toggle("open");
+    }
 
+    function closeNav() {
+      document.getElementById("navLinks").classList.remove("open");
+    }
+
+    // CURRENT YEAR
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
   </script>
 
 </body>
