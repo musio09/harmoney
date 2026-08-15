@@ -3,38 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Harmony Cafe — good food, good coffee, good vibes. Located near ASTU Gate, Adama.">
-  <title>Harmony Cafe | ሃርመኒ ካፌ</title>
-
+  <title>Harmony Cafe Menu | ሃርመኒ ካፌ ሜኑ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     :root {
-      --burgundy: #7b1025;
-      --burgundy-dark: #5b0719;
-      --green: #087443;
-      --green-dark: #055c35;
-      --cream: #fbfaf6;
-      --white: #ffffff;
-      --soft: #f4f1e9;
-      --text: #252525;
-      --muted: #777;
-      --border: #e6e0d4;
+      --primary: #7b1025;
+      --primary-dark: #5b0719;
+      --secondary: #087443;
+      --secondary-light: #0a9b58;
       --gold: #b28a42;
-      --shadow: 0 8px 25px rgba(45, 30, 20, .08);
+      --gold-light: #d4b06a;
+      --cream: #fbfaf6;
+      --soft: #f4f1e9;
+      --white: #ffffff;
+      --text: #1e1e1e;
+      --muted: #6b6b6b;
+      --border: #e6e0d4;
+      --shadow: 0 4px 20px rgba(0,0,0,.06);
+      --radius: 14px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: "Noto Sans Ethiopic", "Segoe UI", Arial, sans-serif;
@@ -43,1047 +36,634 @@
       line-height: 1.5;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button {
-      font-family: inherit;
-    }
-
-    a:focus-visible,
-    button:focus-visible {
-      outline: 3px solid var(--green);
-      outline-offset: 2px;
-    }
-
-    .skip-link {
-      position: absolute;
-      left: -999px;
-      top: auto;
-      background: var(--burgundy);
-      color: white;
-      padding: 10px 16px;
-      border-radius: 8px;
-      z-index: 2000;
-      font-weight: 700;
-    }
-
-    .skip-link:focus {
-      left: 12px;
-      top: 12px;
-    }
-
-    /* =========================
-       NAVIGATION
-    ========================= */
-
-    nav {
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, #9a1a32 100%);
+      color: var(--white);
+      padding: 30px 20px 20px;
+      text-align: center;
       position: sticky;
       top: 0;
-      z-index: 1000;
-      background: rgba(255,255,255,.96);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(10px);
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(123,16,37,.25);
     }
 
-    .nav-inner {
-      max-width: 1150px;
-      margin: auto;
-      padding: 10px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      font-weight: 800;
-      color: var(--burgundy);
-    }
-
-    .nav-brand img {
-      width: 44px;
-      height: 44px;
-      object-fit: contain;
-      border-radius: 50%;
-      background: var(--soft);
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-    }
-
-    .nav-links a {
-      font-size: 14px;
-      font-weight: 700;
-      color: #333;
-      padding: 6px 2px;
-    }
-
-    .nav-links a:hover,
-    .nav-links a.active {
-      color: var(--green);
-    }
-
-    .menu-toggle {
-      display: none;
-      border: 0;
-      background: var(--green);
-      color: white;
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      font-size: 20px;
-      cursor: pointer;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* =========================
-       BUTTONS
-    ========================= */
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 11px 18px;
-      border-radius: 9px;
-      border: 1px solid var(--border);
-      background: white;
-      color: var(--burgundy);
-      font-weight: 700;
-      font-size: 14px;
-      transition: .2s ease;
-      cursor: pointer;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow);
-    }
-
-    .btn.green {
-      background: var(--green);
-      color: white;
-      border-color: var(--green);
-    }
-
-    .btn.red {
-      background: var(--burgundy);
-      color: white;
-      border-color: var(--burgundy);
-    }
-
-    .btn.gold {
-      color: #765719;
-      border-color: var(--gold);
-    }
-
-    /* =========================
-       HERO
-    ========================= */
-
-    .hero {
-      min-height: 590px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 55px 20px;
-      background:
-        radial-gradient(
-          circle at top,
-          rgba(123,16,37,.06),
-          transparent 42%
-        ),
-        linear-gradient(
-          180deg,
-          #fff 0%,
-          var(--cream) 100%
-        );
-    }
-
-    .hero-content {
-      max-width: 800px;
-    }
-
-    .logo {
-      width: 165px;
-      height: 165px;
-      object-fit: contain;
-      margin-bottom: 12px;
-      filter: drop-shadow(0 8px 14px rgba(0,0,0,.08));
-    }
-
-    .eyebrow {
-      color: var(--green);
-      font-weight: 700;
-      font-size: 14px;
-      margin-bottom: 7px;
-    }
-
-    .hero h1 {
-      color: var(--burgundy);
-      font-size: clamp(40px, 7vw, 72px);
-      line-height: 1;
-      letter-spacing: 2px;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-
-    .hero h2 {
-      color: var(--green-dark);
-      font-size: clamp(21px, 4vw, 31px);
-      margin-bottom: 9px;
-    }
-
-    .hero p {
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    .hero-buttons {
-      margin-top: 25px;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    /* =========================
-       GENERAL SECTIONS
-    ========================= */
-
-    section {
-      padding: 65px 20px;
-    }
-
-    .container {
-      max-width: 1150px;
-      margin: auto;
-    }
-
-    .section-heading {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-
-    .section-heading span {
-      color: var(--green);
-      font-size: 13px;
+    header h1 {
+      font-size: clamp(26px, 5vw, 38px);
       font-weight: 800;
       letter-spacing: 1px;
     }
 
-    .section-heading h2 {
-      color: var(--burgundy);
-      font-size: 34px;
+    header p {
+      font-size: 13px;
+      opacity: .85;
       margin-top: 4px;
     }
 
-    .section-heading p {
-      color: var(--muted);
-      margin-top: 3px;
-      font-size: 14px;
-    }
-
-    /* =========================
-       ABOUT
-    ========================= */
-
-    .about {
-      background: white;
-    }
-
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 25px;
-    }
-
-    .about-card {
-      background: var(--soft);
-      padding: 28px;
-      border-radius: 18px;
-      border: 1px solid var(--border);
+    .header-contact {
+      margin-top: 8px;
       display: flex;
-      align-items: center;
-    }
-
-    .about-card h3 {
-      color: var(--burgundy);
-      font-size: 23px;
-      margin-bottom: 8px;
-    }
-
-    .about-card p {
-      color: #555;
-      font-size: 15px;
-      line-height: 1.7;
-    }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .feature {
-      padding: 20px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      box-shadow: 0 5px 18px rgba(0,0,0,.035);
-      font-size: 13px;
-      color: #555;
-    }
-
-    .feature strong {
-      display: block;
-      color: var(--green);
-      margin-bottom: 3px;
-      font-size: 14px;
-    }
-
-    /* =========================
-       MENU
-    ========================= */
-
-    .menu-section {
-      background: var(--cream);
-    }
-
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
       justify-content: center;
-      gap: 8px;
-      margin-bottom: 25px;
+      gap: 16px;
+      font-size: 13px;
+      flex-wrap: wrap;
     }
 
-    .filter-btn {
+    .header-contact a {
+      color: var(--gold-light);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .header-contact a:hover {
+      color: var(--white);
+    }
+
+    /* ── NAV TABS ── */
+    .nav-tabs {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      position: sticky;
+      top: 0;
+      z-index: 99;
+      scrollbar-width: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar { display: none; }
+
+    .nav-tab {
+      flex-shrink: 0;
+      padding: 8px 18px;
       border: 1px solid var(--border);
-      background: white;
-      color: #333;
-      padding: 9px 15px;
       border-radius: 999px;
-      cursor: pointer;
+      background: var(--white);
+      color: var(--text);
       font-weight: 700;
       font-size: 13px;
-      transition: .2s;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: inherit;
     }
 
-    .filter-btn:hover,
-    .filter-btn.active {
-      background: var(--green);
-      color: white;
-      border-color: var(--green);
+    .nav-tab:hover {
+      border-color: var(--secondary);
+      color: var(--secondary);
     }
 
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
+    .nav-tab.active {
+      background: var(--secondary);
+      border-color: var(--secondary);
+      color: var(--white);
+    }
+
+    /* ── MAIN ── */
+    main {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    /* ── SECTION ── */
+    .menu-section {
+      display: none;
+    }
+
+    .menu-section.active {
+      display: block;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title span {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    /* ── MENU ITEMS ── */
+    .menu-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .menu-item {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
       display: flex;
       align-items: center;
       gap: 14px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,.035);
-      transition: .2s ease;
-      padding: 15px;
+      transition: all .2s;
+      cursor: default;
     }
 
     .menu-item:hover {
-      transform: translateY(-3px);
+      border-color: #d0c8b8;
       box-shadow: var(--shadow);
+      transform: translateY(-1px);
     }
 
-    .menu-icon {
-      width: 52px;
-      height: 52px;
-      min-width: 52px;
+    .item-icon {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
       border-radius: 50%;
       background: var(--soft);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 20px;
     }
 
-    .menu-info {
+    /* Category-based icon bg colors */
+    .menu-item[data-cat="pizza"] .item-icon { background: #fff3e0; }
+    .menu-item[data-cat="burger"] .item-icon { background: #fce4ec; }
+    .menu-item[data-cat="juice"] .item-icon { background: #e8f5e9; }
+    .menu-item[data-cat="coffee"] .item-icon { background: #efebe9; }
+    .menu-item[data-cat="breakfast"] .item-icon { background: #fff8e1; }
+    .menu-item[data-cat="main"] .item-icon { background: #f3e5f5; }
+    .menu-item[data-cat="fastfood"] .item-icon { background: #e3f2fd; }
+
+    .item-info {
       flex: 1;
       min-width: 0;
     }
 
-    .menu-top {
+    .item-top {
       display: flex;
-      align-items: flex-start;
+      align-items: baseline;
       justify-content: space-between;
       gap: 8px;
     }
 
-    .menu-item h3 {
-      color: var(--burgundy);
-      font-size: 16px;
-      line-height: 1.3;
+    .item-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
     }
 
-    .price {
-      color: var(--green);
+    .item-name small {
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .item-price {
       font-weight: 800;
+      color: var(--secondary);
       white-space: nowrap;
       font-size: 15px;
     }
 
-    .menu-item p {
-      color: var(--muted);
+    .item-desc {
       font-size: 12px;
-      margin-top: 6px;
-      line-height: 1.45;
-    }
-
-    .menu-item.hidden {
-      display: none;
-    }
-
-    .menu-empty {
-      text-align: center;
       color: var(--muted);
-      font-size: 14px;
-      padding: 30px 10px;
-      display: none;
+      margin-top: 3px;
     }
 
-    .menu-empty.visible {
-      display: block;
-    }
-
-    /* =========================
-       LOCATION
-    ========================= */
-
-    .location-section {
-      background: white;
-    }
-
-    .location-card {
+    /* ── BADGE ── */
+    .badge {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      padding: 2px 8px;
+      border-radius: 999px;
       background: var(--soft);
-      border: 1px solid var(--border);
-      padding: 30px;
-      border-radius: 20px;
-      text-align: center;
+      color: var(--muted);
+      margin-left: 6px;
+      text-transform: uppercase;
     }
 
-    .location-card h2 {
-      color: var(--burgundy);
-      font-size: 27px;
-      margin-bottom: 8px;
+    .badge.new {
+      background: var(--secondary);
+      color: var(--white);
     }
 
-    .contact-line {
-      margin: 7px 0;
-      color: #444;
-      font-size: 14px;
+    .badge.hot {
+      background: #ff6b35;
+      color: var(--white);
     }
 
-    .contact-line strong {
-      color: var(--green);
-    }
-
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 9px;
-      margin-top: 18px;
-    }
-
-    /* =========================
-       FOOTER
-    ========================= */
-
+    /* ── FOOTER ── */
     footer {
-      background: var(--burgundy);
-      color: white;
       text-align: center;
-      padding: 25px 20px;
+      padding: 20px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
     }
 
     footer a {
-      font-weight: 700;
-      text-decoration: underline;
-      text-underline-offset: 2px;
+      color: var(--secondary);
+      text-decoration: none;
+      font-weight: 600;
     }
 
-    footer small {
-      display: block;
-      margin-top: 8px;
-      opacity: .8;
-      font-size: 11px;
-    }
-
-    /* =========================
-       MOBILE
-    ========================= */
-
-    @media (max-width: 800px) {
-
-      .nav-links {
-        display: none;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 64px;
-        background: white;
-        border-bottom: 1px solid var(--border);
-        padding: 15px 20px;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .nav-links.open {
-        display: flex;
-      }
-
-      .menu-toggle {
-        display: flex;
-      }
-
-      .about-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .menu-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .features {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .hero {
-        min-height: 540px;
-      }
-
-      .logo {
-        width: 145px;
-        height: 145px;
-      }
-    }
-
-    @media (max-width: 480px) {
-
-      section {
-        padding: 50px 14px;
-      }
-
-      .hero {
-        padding: 45px 15px;
-      }
-
-      .hero-buttons {
-        flex-direction: column;
-      }
-
-      .hero-buttons .btn {
-        width: 100%;
-      }
-
-      .section-heading h2 {
-        font-size: 29px;
-      }
-
-      .menu-item {
-        padding: 12px;
-      }
-
-      .menu-icon {
-        width: 44px;
-        height: 44px;
-        min-width: 44px;
-        font-size: 20px;
-      }
-
-      .menu-item h3 {
-        font-size: 15px;
-      }
-
-      .price {
-        font-size: 14px;
-      }
-
-      .menu-item p {
-        font-size: 11px;
-      }
-
-      .features {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .feature {
-        padding: 15px 12px;
-      }
-
-      .about-card {
-        padding: 22px;
-      }
-
-      .location-card {
-        padding: 22px 15px;
-      }
-
-      .buttons .btn {
-        flex: 1 1 40%;
-      }
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      header { padding: 20px 16px 16px; }
+      main { padding: 16px 12px 40px; }
+      .menu-item { padding: 12px 14px; }
+      .item-icon { width: 38px; height: 38px; min-width: 38px; font-size: 17px; }
+      .item-name { font-size: 14px; }
+      .item-price { font-size: 14px; }
+      .nav-tabs { padding: 8px 12px; }
+      .nav-tab { padding: 6px 14px; font-size: 12px; }
+      .section-title { font-size: 19px; }
     }
   </style>
 </head>
-
 <body>
 
-  <a href="#main" class="skip-link">Skip to content</a>
-
-  <!-- =========================
-       NAVIGATION
-  ========================= -->
-
-  <nav>
-    <div class="nav-inner">
-
-      <a href="#home" class="nav-brand">
-        <img src="harmony-logo.jpg" alt="Harmony Cafe logo">
-        <span>Harmony Cafe</span>
-      </a>
-
-      <button
-        class="menu-toggle"
-        onclick="toggleNav()"
-        aria-label="Open menu"
-        aria-expanded="false"
-        aria-controls="navLinks"
-        id="menuToggleBtn">
-        ☰
-      </button>
-
-      <div class="nav-links" id="navLinks">
-        <a href="#home" onclick="closeNav()">Home</a>
-        <a href="#about" onclick="closeNav()">About</a>
-        <a href="#menu" onclick="closeNav()">Menu</a>
-        <a href="#location" onclick="closeNav()">Location</a>
-      </div>
-
+  <!-- ═══ HEADER ═══ -->
+  <header>
+    <h1>🍽 HARMONY CAFE</h1>
+    <p>ሃርመኒ ካፌ • Good Food • Good Coffee • Good Vibes</p>
+    <div class="header-contact">
+      <span>📍 ASTU Gate, Adama</span>
+      <a href="tel:+251911903172">📞 +251 911 90 31 72</a>
     </div>
-  </nav>
-
-
-  <!-- =========================
-       HERO
-  ========================= -->
-
-  <header class="hero" id="home">
-
-    <div class="hero-content">
-
-      <img
-        src="harmony-logo.jpg"
-        alt="Harmony Cafe Logo"
-        class="logo"
-      >
-
-      <div class="eyebrow">
-        እንኳን ደህና መጡ
-      </div>
-
-      <h1>HARMONY CAFE</h1>
-
-      <h2>ሃርመኒ ካፌ</h2>
-
-      <p>
-        Good Food • Good Coffee • Good Vibes
-      </p>
-
-      <div class="hero-buttons">
-        <a href="#menu" class="btn green">
-          🍽 View Menu
-        </a>
-
-        <a href="tel:+251911903172" class="btn red">
-          📞 Call Us
-        </a>
-      </div>
-
-    </div>
-
   </header>
 
+  <!-- ═══ CATEGORY TABS ═══ -->
+  <nav class="nav-tabs" id="categoryTabs">
+    <button class="nav-tab active" data-target="all">🔥 All</button>
+    <button class="nav-tab" data-target="pizza">🍕 Pizza</button>
+    <button class="nav-tab" data-target="burger">🍔 Burger</button>
+    <button class="nav-tab" data-target="juice">🥤 Juice</button>
+    <button class="nav-tab" data-target="coffee">☕ Coffee</button>
+    <button class="nav-tab" data-target="breakfast">🍳 Breakfast</button>
+    <button class="nav-tab" data-target="main">🍽 Main</button>
+    <button class="nav-tab" data-target="fastfood">🌭 Fast Food</button>
+  </nav>
 
-  <main id="main">
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main>
 
-  <!-- =========================
-       ABOUT
-  ========================= -->
-
-  <section class="about" id="about">
-
-    <div class="container">
-
-      <div class="section-heading">
-        <span>ABOUT US</span>
-        <h2>Harmony Cafe</h2>
-        <p lang="am">ቡና • ምግብ • ጁስ</p>
+    <!-- ── PIZZA ── -->
+    <section class="menu-section active" data-category="pizza">
+      <h2 class="section-title">🍕 Pizza <span>Freshly baked</span></h2>
+      <div class="menu-items">
+        <div class="menu-item" data-cat="pizza">
+          <div class="item-icon">🍕</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Margherita <span class="badge new">NEW</span></span>
+              <span class="item-price">450 ETB</span>
+            </div>
+            <div class="item-desc">Tomato • Mozzarella • Basil</div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="pizza">
+          <div class="item-icon">🍕</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Pepperoni</span>
+              <span class="item-price">520 ETB</span>
+            </div>
+            <div class="item-desc">Pepperoni • Cheese • Tomato Sauce</div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="pizza">
+          <div class="item-icon">🧀</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Cheese Lovers <span class="badge new">NEW</span></span>
+              <span class="item-price">480 ETB</span>
+            </div>
+            <div class="item-desc">Mozzarella • Cheddar • Parmesan</div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="pizza">
+          <div class="item-icon">🌶️</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Spicy Veggie</span>
+              <span class="item-price">420 ETB</span>
+            </div>
+            <div class="item-desc">Bell Peppers • Olives • Onion • Jalapeño</div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="pizza">
+          <div class="item-icon">🍗</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Chicken BBQ</span>
+              <span class="item-price">550 ETB</span>
+            </div>
+            <div class="item-desc">Grilled Chicken • BBQ Sauce • Cheese</div>
+          </div>
+        </div>
       </div>
+    </section>
 
-
-
-        <div class="features">
-
-          <div class="feature">
-            <strong>☕ ቡና</strong>
-            ትኩስ እና ጥራት ያለው
+    <!-- ── BURGER ── -->
+    <section class="menu-section" data-category="burger">
+      <h2 class="section-title">🍔 Burgers <span>Juicy & fresh</span></h2>
+      <div class="menu-items">
+        <div class="menu-item" data-cat="burger">
+          <div class="item-icon">🍔</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Classic Beef Burger <span class="badge new">NEW</span></span>
+              <span class="item-price">420 ETB</span>
+            </div>
+            <div class="item-desc">Beef Patty • Lettuce • Tomato • Cheese</div>
           </div>
-
-          <div class="feature">
-            <strong>🍽 ምግብ</strong>
-            ትኩስ እና ጣፋጭ
-          </div>
-
-          <div class="feature">
-            <strong>🥤 ጁስ</strong>
-            ፍረሽ ፍራፍሬ
-          </div>
-
-          <div class="feature">
-            <strong>🤝 አገልግሎታችን </strong>
-            ምቹ እና ፈጣን
-          </div>
-
         </div>
-
+        <div class="menu-item" data-cat="burger">
+          <div class="item-icon">🐔</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Chicken Crispy Burger</span>
+              <span class="item-price">400 ETB</span>
+            </div>
+            <div class="item-desc">Crispy Chicken • Coleslaw • Mayo</div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="burger">
+          <div class="item-icon">🧀</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Double Cheese Burger <span class="badge new">NEW</span></span>
+              <span class="item-price">520 ETB</span>
+            </div>
+            <div class="item-desc">Double Beef • Double Cheese • Special Sauce</div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="burger">
+          <div class="item-icon">🥬</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Veggie Burger</span>
+              <span class="item-price">350 ETB</span>
+            </div>
+            <div class="item-desc">Veggie Patty • Lettuce • Tomato • Avocado</div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="burger">
+          <div class="item-icon">🔥</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Spicy BBQ Burger <span class="badge hot">HOT</span></span>
+              <span class="item-price">460 ETB</span>
+            </div>
+            <div class="item-desc">Beef Patty • Pepper Jack • Jalapeño • BBQ</div>
+          </div>
+        </div>
       </div>
+    </section>
 
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       MENU
-  ========================= -->
-
-  <section class="menu-section" id="menu">
-
-    <div class="container">
-
-      <div class="section-heading">
-        <span>OUR MENU</span>
+    <!-- ── JUICE ── -->
+    <section class="menu-section" data-category="juice">
+      <h2 class="section-title">🥤 Fresh Juice <span>100% natural</span></h2>
+      <div class="menu-items">
+        <div class="menu-item" data-cat="juice">
+          <div class="item-icon">🍊</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Fresh Orange Juice</span>
+              <span class="item-price">150 ETB</span>
+            </div>
+            <div class="item-desc">Freshly squeezed oranges</div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="juice">
+          <div class="item-icon">🥭</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Mango Juice</span>
+              <span class="item-price">170 ETB</span>
+            </div>
+            <div class="item-desc">Ripe mango blended to perfection</div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="juice">
+          <div class="item-icon">🍓</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Strawberry Smoothie <span class="badge new">NEW</span></span>
+              <span class="item-price">200 ETB</span>
+            </div>
+            <div class="item-desc">Strawberry • Yogurt • Honey</div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="juice">
+          <div class="item-icon">🥑</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Avocado Juice</span>
+              <span class="item-price">180 ETB</span>
+            </div>
+            <div class="item-desc">Creamy avocado with milk</div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="juice">
+          <div class="item-icon">🍍</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Pineapple Punch</span>
+              <span class="item-price">160 ETB</span>
+            </div>
+            <div class="item-desc">Pineapple • Lemon • Mint</div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="juice">
+          <div class="item-icon">🥤</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Mix Fruit Juice</span>
+              <span class="item-price">200 ETB</span>
+            </div>
+            <div class="item-desc">Seasonal fruits blended fresh</div>
+          </div>
+        </div>
       </div>
+    </section>
 
-
-      <!-- FILTERS -->
-
-      <div class="filters" role="group" aria-label="Filter menu by category">
-
-        <button
-          class="filter-btn active"
-          onclick="filterMenu('all', this)">
-          All
-        </button>
-
-        <button
-          class="filter-btn"
-          onclick="filterMenu('breakfast', this)">
-          🍳 Breakfast (ቁርስ)
-        </button>
-
-        <button
-          class="filter-btn"
-          onclick="filterMenu('fastfood', this)">
-          🍔 Fast Food
-        </button>
-
-        <button
-          class="filter-btn"
-          onclick="filterMenu('main', this)">
-          🍽 Main
-        </button>
-
-        <button
-          class="filter-btn"
-          onclick="filterMenu('coffee', this)">
-          ☕ Coffee
-        </button>
-
-        <button
-          class="filter-btn"
-          onclick="filterMenu('juice', this)">
-          🥤 Juice
-        </button>
-
+    <!-- ── COFFEE ── -->
+    <section class="menu-section" data-category="coffee">
+      <h2 class="section-title">☕ Coffee <span>Freshly brewed</span></h2>
+      <div class="menu-items">
+        <div class="menu-item" data-cat="coffee">
+          <div class="item-icon">☕</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Espresso</span>
+              <span class="item-price">120 ETB</span>
+            </div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="coffee">
+          <div class="item-icon">☕</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Cappuccino</span>
+              <span class="item-price">150 ETB</span>
+            </div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="coffee">
+          <div class="item-icon">☕</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Latte</span>
+              <span class="item-price">160 ETB</span>
+            </div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="coffee">
+          <div class="item-icon">🥛</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Macchiato</span>
+              <span class="item-price">140 ETB</span>
+            </div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="coffee">
+          <div class="item-icon">❄️</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Iced Coffee</span>
+              <span class="item-price">170 ETB</span>
+            </div>
+          </div>
+        </div>
       </div>
+    </section>
 
-
-      <!-- MENU ITEMS -->
-
-      <div class="menu-grid" id="menuGrid">
-
-
-        <!-- BREAKFAST -->
-
-        <div class="menu-item" data-category="breakfast">
-          <div class="menu-icon">🍳</div>
-          <div class="menu-info">
-            <div class="menu-top">
-              <h3>Special Breakfast</h3>
-              <span class="price">200 ETB</span>
+    <!-- ── BREAKFAST ── -->
+    <section class="menu-section" data-category="breakfast">
+      <h2 class="section-title">🍳 Breakfast <span>Served all day</span></h2>
+      <div class="menu-items">
+        <div class="menu-item" data-cat="breakfast">
+          <div class="item-icon">🍳</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Special Breakfast</span>
+              <span class="item-price">200 ETB</span>
             </div>
-            <p lang="am">እንቁላል • ዳቦ • አቮካዶ</p>
+            <div class="item-desc" lang="am">እንቁላል • ዳቦ • አቮካዶ</div>
           </div>
         </div>
-
-        <div class="menu-item" data-category="breakfast">
-          <div class="menu-icon">🥗</div>
-          <div class="menu-info">
-            <div class="menu-top">
-              <h3>Fasting Breakfast</h3>
-              <span class="price">220 ETB</span>
+        <div class="menu-item" data-cat="breakfast">
+          <div class="item-icon">🥗</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Fasting Breakfast</span>
+              <span class="item-price">220 ETB</span>
             </div>
-            <p lang="am">አትክልት • ዳቦ • ልዩ ጎን</p>
+            <div class="item-desc" lang="am">አትክልት • ዳቦ • ልዩ ጎን</div>
           </div>
         </div>
-
-
-        <!-- FAST FOOD -->
-
-        <div class="menu-item" data-category="fastfood">
-          <div class="menu-icon">🍔</div>
-          <div class="menu-info">
-            <div class="menu-top">
-              <h3>Harmony Burger</h3>
-              <span class="price">420 ETB</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-item" data-category="fastfood">
-          <div class="menu-icon">🥪</div>
-          <div class="menu-info">
-            <div class="menu-top">
-              <h3>Chicken Sandwich</h3>
-              <span class="price">400 ETB</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-item" data-category="fastfood">
-          <div class="menu-icon">🍟</div>
-          <div class="menu-info">
-            <div class="menu-top">
-              <h3>Fries (ቺፕስ)</h3>
-              <span class="price">250 ETB</span>
-            </div>
-          </div>
-        </div>
-
-
-        <!-- MAIN -->
-
-        <div class="menu-item" data-category="main">
-          <div class="menu-icon">🍝</div>
-          <div class="menu-info">
-            <div class="menu-top">
-              <h3>Special Pasta (ፓስታ)</h3>
-              <span class="price">280 ETB</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-item" data-category="main">
-          <div class="menu-icon">🍚</div>
-          <div class="menu-info">
-            <div class="menu-top">
-              <h3>Chicken Rice</h3>
-              <span class="price">300 ETB</span>
-            </div>
-            <p lang="am">ሩዝ • ዶሮ • ሰላጣ</p>
-          </div>
-        </div>
-
-
-        <!-- COFFEE -->
-
-        <div class="menu-item" data-category="coffee">
-          <div class="menu-icon">☕</div>
-          <div class="menu-info">
-            <div class="menu-top">
-              <h3>Espresso</h3>
-              <span class="price">120 ETB</span>
-            </div>
-          </div>
-        </div>
-
       </div>
+    </section>
 
-      <p class="menu-empty" id="menuEmpty">No items in this category yet — check back soon.</p>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       LOCATION
-  ========================= -->
-
-  <section class="location-section" id="location">
-
-    <div class="container">
-
-      <div class="section-heading">
-        <span>VISIT US</span>
-        <h2>Harmony Cafe</h2>
-        <p lang="am">አዳማ • ASTU Gate</p>
-      </div>
-
-
-      <div class="location-card">
-
-        <h2 lang="am">📍 የት እንገኛለን?</h2>
-
-        <p class="contact-line" lang="am">
-          ASTU Gate አካባቢ፣ አዳማ
-        </p>
-
-        <p class="contact-line">
-          📞 <a href="tel:+251911903172">+251 911 90 31 72</a>
-        </p>
-
-
-        <div class="buttons">
-
-          <a
-            class="btn green"
-            href="tel:+251911903172">
-            📞 ደውል
-          </a>
-
-          <a
-            class="btn"
-            href="https://www.facebook.com/"
-            target="_blank"
-            rel="noopener">
-            Facebook
-          </a>
-
-          <a
-            class="btn gold"
-            href="https://www.instagram.com/"
-            target="_blank"
-            rel="noopener">
-            Instagram
-          </a>
-
-          <a
-            class="btn green"
-            href="https://www.tiktok.com/"
-            target="_blank"
-            rel="noopener">
-            TikTok
-          </a>
-
+    <!-- ── MAIN ── -->
+    <section class="menu-section" data-category="main">
+      <h2 class="section-title">🍽 Main Dishes <span>Hearty meals</span></h2>
+      <div class="menu-items">
+        <div class="menu-item" data-cat="main">
+          <div class="item-icon">🍝</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Special Pasta</span>
+              <span class="item-price">280 ETB</span>
+            </div>
+            <div class="item-desc" lang="am">ፓስታ</div>
+          </div>
         </div>
-
+        <div class="menu-item" data-cat="main">
+          <div class="item-icon">🍚</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Chicken Rice</span>
+              <span class="item-price">300 ETB</span>
+            </div>
+            <div class="item-desc" lang="am">ሩዝ • ዶሮ • ሰላጣ</div>
+          </div>
+        </div>
       </div>
+    </section>
 
-    </div>
-
-  </section>
+    <!-- ── FAST FOOD ── -->
+    <section class="menu-section" data-category="fastfood">
+      <h2 class="section-title">🌭 Fast Food <span>Quick bites</span></h2>
+      <div class="menu-items">
+        <div class="menu-item" data-cat="fastfood">
+          <div class="item-icon">🥪</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Chicken Sandwich</span>
+              <span class="item-price">400 ETB</span>
+            </div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="fastfood">
+          <div class="item-icon">🍟</div>
+          <div class="item-info">
+            <div class="item-top">
+              <span class="item-name">Fries (ቺፕስ)</span>
+              <span class="item-price">250 ETB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
   </main>
 
-
-  <!-- =========================
-       FOOTER
-  ========================= -->
-
-  <footer class="site-footer">
-    <div class="website-credit">
-      <span>Website designed &amp; built by </span>
-      <a href="https://officialcloverdigital.com" target="_blank" rel="noopener">Clover Digital</a>
-      <br>
-      <span>Contact: </span>
-      <a href="tel:+251944106861">0944 106 861</a>
-    </div>
-    <small>&copy; 2026 Harmony Cafe. All rights reserved.</small>
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <p>Harmony Cafe &copy; 2026 — <a href="tel:+251911903172">Call us</a></p>
   </footer>
 
-
+  <!-- ═══ SCRIPT ═══ -->
   <script>
-    function toggleNav() {
-      var links = document.getElementById('navLinks');
-      var btn = document.getElementById('menuToggleBtn');
-      var isOpen = links.classList.toggle('open');
-      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    }
+    (function() {
+      const tabs = document.querySelectorAll('.nav-tab');
+      const sections = document.querySelectorAll('.menu-section');
 
-    function closeNav() {
-      var links = document.getElementById('navLinks');
-      var btn = document.getElementById('menuToggleBtn');
-      links.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
-    }
+      function showCategory(category) {
+        // update tabs
+        tabs.forEach(t => t.classList.toggle('active', t.dataset.target === category));
 
-    function filterMenu(category, btn) {
-      var buttons = document.querySelectorAll('.filter-btn');
-      buttons.forEach(function (b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-
-      var items = document.querySelectorAll('.menu-item');
-      var visibleCount = 0;
-
-      items.forEach(function (item) {
-        if (category === 'all' || item.getAttribute('data-category') === category) {
-          item.classList.remove('hidden');
-          visibleCount++;
+        // update sections
+        if (category === 'all') {
+          sections.forEach(s => s.classList.add('active'));
         } else {
-          item.classList.add('hidden');
+          sections.forEach(s => s.classList.toggle('active', s.dataset.category === category));
         }
-      });
-
-      var empty = document.getElementById('menuEmpty');
-      empty.classList.toggle('visible', visibleCount === 0);
-    }
-
-    document.addEventListener('click', function (e) {
-      var nav = document.querySelector('nav');
-      var links = document.getElementById('navLinks');
-      if (links.classList.contains('open') && !nav.contains(e.target)) {
-        closeNav();
       }
-    });
 
-    document.querySelectorAll('.nav-links a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        document.querySelectorAll('.nav-links a').forEach(function (l) {
-          l.classList.remove('active');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          showCategory(this.dataset.target);
         });
-        link.classList.add('active');
       });
-    });
-  </script>
 
+      // Show all by default
+      showCategory('all');
+    })();
+  </script>
 </body>
 </html>
