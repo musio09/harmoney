@@ -51,3 +51,14 @@ jobs:
 
       - id: deployment
         uses: actions/deploy-pages@v4
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NOTE: This file is stored as .txt because the GitHub App used to create this
+# branch is not permitted to push workflow files.
+#
+# You do NOT need this workflow. The simplest setup is:
+#   Settings → Pages → Source: "Deploy from a branch" → main → / (root)
+#
+# Only if you prefer the Actions-based deploy, copy this file yourself to:
+#   .github/workflows/deploy-pages.yml
+# and set Settings → Pages → Source: "GitHub Actions".
