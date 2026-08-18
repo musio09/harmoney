@@ -68,6 +68,8 @@ dev/                        Local testing only — not used in production
   mock-supabase.js          In-memory fake Supabase backend
   test-e2e.js               48 automated end-to-end checks
   serve-demo.js             Clickable local demo
+docs/
+  github-pages-workflow.yml.txt   Optional Actions deploy template (not required)
 SETUP.md                    Step-by-step setup guide
 ```
 
