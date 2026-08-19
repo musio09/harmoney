@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Harmony Cafe</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="../harmony-logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #7b1025;
+      --primary-dark: #5b0719;
+      --secondary: #087443;
+      --secondary-light: #0a9b58;
+      --gold-light: #d4b06a;
+      --cream: #fbfaf6;
+      --soft: #f4f1e9;
+      --white: #ffffff;
+      --text: #1e1e1e;
+      --muted: #6b6b6b;
+      --border: #e6e0d4;
+      --danger: #c62828;
+      --shadow: 0 4px 20px rgba(0,0,0,.06);
+      --radius: 14px;
+    }
+
+    body {
+      font-family: "Noto Sans Ethiopic", "Segoe UI", Arial, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    [hidden] { display: none !important; }
+
+    /* ── LOGIN ── */
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--primary) 0%, #9a1a32 100%);
+    }
+
+    .login-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 36px 28px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+
+    .login-card h1 {
+      font-size: 22px;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .login-card .sub {
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    /* ── FORM ELEMENTS ── */
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    input[type=text], input[type=email], input[type=password],
+    input[type=number], textarea, select {
+      width: 100%;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--white);
+      color: var(--text);
+      transition: border-color .15s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(8,116,67,.12);
+    }
+
+    textarea { resize: vertical; min-height: 70px; }
+
+    .field { margin-bottom: 16px; }
+
+    .btn {
+      padding: 11px 18px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .15s;
+      background: var(--soft);
+      color: var(--text);
+    }
+
+    .btn:hover:not(:disabled) { filter: brightness(.95); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; }
+    .btn-primary { background: var(--secondary); color: var(--white); }
+    .btn-dark { background: var(--primary); color: var(--white); }
+    .btn-danger { background: #fdecea; color: var(--danger); }
+    .btn-block { width: 100%; }
+    .btn-sm { padding: 7px 12px; font-size: 12px; border-radius: 8px; }
+
+    /* ── ALERTS ── */
+    .alert {
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .alert-error { background: #fdecea; color: #a12d21; border: 1px solid #f5c6c0; }
+    .alert-ok    { background: #e8f5e9; color: #1b5e20; border: 1px solid #c3e6c9; }
+    .alert-warn  { background: #fff8e1; color: #8a6d1a; border: 1px solid #f0e2b6; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: linear-gradient(135deg, var(--primary) 0%, #9a1a32 100%);
+      color: var(--white);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      flex-wrap: wrap;
+    }
+
+    .topbar h1 { font-size: 17px; font-weight: 800; }
+    .topbar .who { font-size: 12px; opacity: .85; }
+    .topbar-actions { display: flex; gap: 8px; align-items: center; }
+    .topbar a.view-menu {
+      color: var(--gold-light);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .topbar a.view-menu:hover { color: var(--white); }
+
+    /* ── TABS ── */
+    .admin-tabs {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      position: sticky;
+      top: 56px;
+      z-index: 40;
+    }
+
+    .admin-tab {
+      flex-shrink: 0;
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--white);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--text);
+    }
+
+    .admin-tab.active { background: var(--secondary); border-color: var(--secondary); color: var(--white); }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    main.admin-main { max-width: 1000px; margin: 0 auto; padding: 20px 16px 80px; }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .panel-head h2 { font-size: 20px; color: var(--primary); }
+
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .toolbar input[type=text], .toolbar select { width: auto; min-width: 150px; padding: 8px 12px; font-size: 13px; }
+
+    /* ── ITEM ROWS ── */
+    .rows { display: flex; flex-direction: column; gap: 8px; }
+
+    .row-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .row-card.unavailable { opacity: .6; background: var(--soft); }
+
+    .row-icon {
+      width: 44px; height: 44px; min-width: 44px;
+      border-radius: 50%;
+      background: var(--soft);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; overflow: hidden;
+    }
+    .row-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+    .row-main { flex: 1; min-width: 160px; }
+    .row-name { font-weight: 700; font-size: 15px; }
+    .row-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .row-price { font-weight: 800; color: var(--secondary); white-space: nowrap; }
+    .row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .pill {
+      display: inline-block;
+      font-size: 9px; font-weight: 800; letter-spacing: .5px;
+      padding: 2px 8px; border-radius: 999px;
+      background: var(--soft); color: var(--muted);
+      margin-left: 6px; text-transform: uppercase;
+    }
+    .pill.new { background: var(--secondary); color: var(--white); }
+    .pill.hot { background: #ff6b35; color: var(--white); }
+    .pill.off { background: #9e9e9e; color: var(--white); }
+
+    /* ── SWITCH ── */
+    .switch { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; font-size: 12px; font-weight: 700; color: var(--muted); }
+    .switch input { display: none; }
+    .switch .track {
+      width: 40px; height: 22px; border-radius: 999px;
+      background: #ccc; position: relative; transition: background .2s;
+    }
+    .switch .track::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--white); transition: transform .2s;
+    }
+    .switch input:checked + .track { background: var(--secondary); }
+    .switch input:checked + .track::after { transform: translateX(18px); }
+
+    /* ── MODAL ── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.5);
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 20px; z-index: 200; overflow-y: auto;
+    }
+
+    .modal {
+      background: var(--white);
+      border-radius: 18px;
+      width: 100%; max-width: 520px;
+      padding: 24px;
+      margin: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    }
+
+    .modal h3 { font-size: 19px; color: var(--primary); margin-bottom: 18px; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .img-preview {
+      width: 72px; height: 72px; border-radius: 12px;
+      background: var(--soft);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; overflow: hidden; flex-shrink: 0;
+    }
+    .img-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .img-row { display: flex; gap: 12px; align-items: center; }
+
+    .hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+    .empty { text-align: center; color: var(--muted); padding: 40px 16px; font-size: 14px; }
+
+    @media (max-width: 600px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .admin-tabs { top: 92px; }
+      .row-actions { width: 100%; }
+      .topbar h1 { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════ SETUP NOTICE ═══════════════ -->
+  <div id="setupScreen" class="login-wrap" hidden>
+    <div class="login-card">
+      <h1>⚙️ Setup required</h1>
+      <p class="sub">Harmony Cafe Admin</p>
+      <div class="alert alert-warn">
+        This dashboard is not connected to Supabase yet.
+      </div>
+      <p style="font-size:13px;color:var(--muted)">
+        Open <code>js/config.js</code> and replace <code>YOUR_SUPABASE_URL_HERE</code> and
+        <code>YOUR_SUPABASE_ANON_KEY_HERE</code> with your project's
+        <strong>Project URL</strong> and <strong>anon public</strong> key
+        (Supabase → Settings → API).
+      </p>
+      <p class="hint">Never paste the service_role key here — it must stay secret.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════ LOGIN ═══════════════ -->
+  <div id="loginScreen" class="login-wrap" hidden>
+    <form class="login-card" id="loginForm">
+      <h1>🔐 Owner Login</h1>
+      <p class="sub">Harmony Cafe — Menu Admin</p>
+
+      <div id="loginAlert"></div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" autocomplete="username" required>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Log in</button>
+
+      <p class="hint" style="text-align:center;margin-top:14px">
+        <a href="../index.html" style="color:var(--secondary);text-decoration:none;font-weight:700">← Back to menu</a>
+      </p>
+    </form>
+  </div>
+
+  <!-- ═══════════════ DASHBOARD ═══════════════ -->
+  <div id="dashboard" hidden>
+    <div class="topbar">
+      <div>
+        <h1>🍽 Harmony Cafe Admin</h1>
+        <div class="who" id="whoami"></div>
+      </div>
+      <div class="topbar-actions">
+        <a class="view-menu" href="../index.html" target="_blank" rel="noopener">View menu ↗</a>
+        <button class="btn btn-sm" id="logoutBtn">Log out</button>
+      </div>
+    </div>
+
+    <nav class="admin-tabs">
+      <button class="admin-tab active" data-panel="items">🍕 Menu Items</button>
+      <button class="admin-tab" data-panel="categories">📂 Categories</button>
+      <button class="admin-tab" data-panel="cafe">🏪 Cafe Info</button>
+    </nav>
+
+    <main class="admin-main">
+      <div id="globalAlert"></div>
+
+      <!-- ── ITEMS ── -->
+      <section class="panel active" id="panel-items">
+        <div class="panel-head">
+          <h2>Menu Items <span class="pill" id="itemCount">0</span></h2>
+          <div class="toolbar">
+            <input type="text" id="itemSearch" placeholder="Search items…">
+            <select id="itemFilter"><option value="">All categories</option></select>
+            <button class="btn btn-primary" id="addItemBtn">+ Add Item</button>
+          </div>
+        </div>
+        <div class="rows" id="itemRows"></div>
+      </section>
+
+      <!-- ── CATEGORIES ── -->
+      <section class="panel" id="panel-categories">
+        <div class="panel-head">
+          <h2>Categories <span class="pill" id="catCount">0</span></h2>
+          <button class="btn btn-primary" id="addCatBtn">+ Add Category</button>
+        </div>
+        <div class="rows" id="catRows"></div>
+      </section>
+
+      <!-- ── CAFE INFO ── -->
+      <section class="panel" id="panel-cafe">
+        <div class="panel-head"><h2>Cafe Information</h2></div>
+        <form id="cafeForm" style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;max-width:640px">
+          <div class="grid-2">
+            <div class="field"><label for="cf_name">Cafe name</label><input type="text" id="cf_name"></div>
+            <div class="field"><label for="cf_name_am">Name (Amharic)</label><input type="text" id="cf_name_am"></div>
+          </div>
+          <div class="field"><label for="cf_tagline">Tagline</label><input type="text" id="cf_tagline"></div>
+          <div class="grid-2">
+            <div class="field"><label for="cf_address">Address</label><input type="text" id="cf_address"></div>
+            <div class="field"><label for="cf_phone">Phone (dial)</label><input type="text" id="cf_phone" placeholder="+251911903172"></div>
+          </div>
+          <div class="grid-2">
+            <div class="field"><label for="cf_phone_label">Phone (display)</label><input type="text" id="cf_phone_label"></div>
+            <div class="field"><label for="cf_currency">Currency</label><input type="text" id="cf_currency" placeholder="ETB"></div>
+          </div>
+          <div class="grid-2">
+            <div class="field"><label for="cf_header_emoji">Header emoji</label><input type="text" id="cf_header_emoji" maxlength="4"></div>
+            <div class="field"><label for="cf_footer">Footer text</label><input type="text" id="cf_footer"></div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="cafeSaveBtn">Save changes</button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <!-- ═══════════════ ITEM MODAL ═══════════════ -->
+  <div class="modal-backdrop" id="itemModal" hidden>
+    <form class="modal" id="itemForm">
+      <h3 id="itemModalTitle">Add Menu Item</h3>
+      <div id="itemModalAlert"></div>
+
+      <input type="hidden" id="it_id">
+
+      <div class="field">
+        <label for="it_name">Name *</label>
+        <input type="text" id="it_name" required>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="it_price">Price *</label>
+          <input type="number" id="it_price" min="0" step="0.01" required>
+        </div>
+        <div class="field">
+          <label for="it_category">Category</label>
+          <select id="it_category"></select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="it_desc">Description</label>
+        <textarea id="it_desc" placeholder="Tomato • Mozzarella • Basil"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="it_desc_am">Description (Amharic)</label>
+        <textarea id="it_desc_am" lang="am" placeholder="እንቁላል • ዳቦ • አቮካዶ"></textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="it_emoji">Emoji icon</label>
+          <input type="text" id="it_emoji" maxlength="4" placeholder="🍕">
+        </div>
+        <div class="field">
+          <label for="it_badge">Badge</label>
+          <select id="it_badge">
+            <option value="">None</option>
+            <option value="new">NEW</option>
+            <option value="hot">HOT</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Photo (optional — replaces the emoji)</label>
+        <div class="img-row">
+          <div class="img-preview" id="it_preview">🍽</div>
+          <div style="flex:1">
+            <input type="file" id="it_image" accept="image/*" style="font-size:13px">
+            <div class="hint">JPG/PNG/WebP, max 2 MB. Leave empty to keep the emoji.</div>
+            <button type="button" class="btn btn-sm btn-danger" id="it_removeImg" hidden style="margin-top:6px">Remove photo</button>
+          </div>
+        </div>
+        <input type="hidden" id="it_image_url">
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="it_sort">Sort order</label>
+          <input type="number" id="it_sort" value="0" step="1">
+        </div>
+        <div class="field">
+          <label>Availability</label>
+          <label class="switch">
+            <input type="checkbox" id="it_available" checked>
+            <span class="track"></span>
+            <span id="it_availableLabel">Available</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn" id="itemCancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="itemSave">Save item</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ═══════════════ CATEGORY MODAL ═══════════════ -->
+  <div class="modal-backdrop" id="catModal" hidden>
+    <form class="modal" id="catForm">
+      <h3 id="catModalTitle">Add Category</h3>
+      <div id="catModalAlert"></div>
+
+      <input type="hidden" id="ct_id">
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="ct_name">Name *</label>
+          <input type="text" id="ct_name" required>
+        </div>
+        <div class="field">
+          <label for="ct_emoji">Emoji</label>
+          <input type="text" id="ct_emoji" maxlength="4" placeholder="🍕">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="ct_slug">Slug * <span style="text-transform:none;font-weight:400">(URL id, lowercase)</span></label>
+        <input type="text" id="ct_slug" required placeholder="pizza">
+      </div>
+
+      <div class="field">
+        <label for="ct_subtitle">Subtitle</label>
+        <input type="text" id="ct_subtitle" placeholder="Freshly baked">
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="ct_sort">Sort order</label>
+          <input type="number" id="ct_sort" value="0" step="1">
+        </div>
+        <div class="field">
+          <label>Visible on menu</label>
+          <label class="switch">
+            <input type="checkbox" id="ct_active" checked>
+            <span class="track"></span>
+            <span id="ct_activeLabel">Visible</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn" id="catCancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="catSave">Save category</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ═══════════════ SCRIPTS ═══════════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

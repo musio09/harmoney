@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect to Supabase | Harmony Cafe</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="harmony-logo.jpg">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--primary:#7b1025;--secondary:#087443;--cream:#fbfaf6;--soft:#f4f1e9;
+      --white:#fff;--text:#1e1e1e;--muted:#6b6b6b;--border:#e6e0d4;--danger:#c62828;--radius:14px}
+    body{font-family:"Segoe UI",Arial,sans-serif;background:var(--cream);color:var(--text);line-height:1.55}
+    header{background:linear-gradient(135deg,var(--primary),#9a1a32);color:#fff;padding:26px 20px;text-align:center}
+    header h1{font-size:22px}
+    header p{font-size:13px;opacity:.85;margin-top:4px}
+    main{max-width:760px;margin:0 auto;padding:24px 16px 70px}
+    .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:18px}
+    .card h2{font-size:17px;color:var(--primary);margin-bottom:6px}
+    .card .sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+    label{display:block;font-size:12px;font-weight:700;color:var(--muted);
+      margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+    input{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;
+      font-size:14px;font-family:inherit;margin-bottom:14px}
+    input:focus{outline:none;border-color:var(--secondary);box-shadow:0 0 0 3px rgba(8,116,67,.12)}
+    .btn{padding:11px 20px;border:none;border-radius:10px;font-size:14px;font-weight:700;
+      cursor:pointer;font-family:inherit;background:var(--secondary);color:#fff}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .btn.alt{background:var(--soft);color:var(--text)}
+    .check{display:flex;gap:10px;align-items:flex-start;padding:10px 0;
+      border-bottom:1px solid var(--border);font-size:14px}
+    .check:last-child{border-bottom:none}
+    .check .ico{font-size:16px;line-height:1.4;flex-shrink:0;width:20px}
+    .check .body{flex:1;min-width:0}
+    .check .name{font-weight:600}
+    .check .detail{font-size:12px;color:var(--muted);margin-top:3px;word-break:break-word}
+    .check .detail code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:11px}
+    .alert{padding:12px 15px;border-radius:10px;font-size:13px;margin-bottom:16px}
+    .alert.ok{background:#e8f5e9;color:#1b5e20;border:1px solid #c3e6c9}
+    .alert.err{background:#fdecea;color:#a12d21;border:1px solid #f5c6c0}
+    .alert.warn{background:#fff8e1;color:#8a6d1a;border:1px solid #f0e2b6}
+    pre{background:#1e1e1e;color:#e8e8e8;padding:14px;border-radius:10px;
+      font-size:12px;overflow-x:auto;margin-top:10px}
+    .hint{font-size:12px;color:var(--muted);margin-top:8px}
+    a{color:var(--secondary);font-weight:600}
+    .steps{font-size:13px;color:var(--muted);padding-left:20px}
+    .steps li{margin-bottom:5px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🔌 Connect to Supabase</h1>
+    <p>Harmony Cafe — one-time connection check</p>
+  </header>
+
+  <main>
+    <div class="card">
+      <h2>Step 1 · Paste your two PUBLIC values</h2>
+      <p class="sub">
+        Supabase Dashboard → <strong>Settings</strong> ⚙️ → <strong>API</strong>.
+        Both values below are safe to publish — never paste the
+        <strong>service_role</strong> key here.
+      </p>
+
+      <label for="url">Project URL</label>
+      <input type="text" id="url" placeholder="https://abcdefgh.supabase.co" autocomplete="off" spellcheck="false">
+
+      <label for="key">anon / public key</label>
+      <input type="text" id="key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." autocomplete="off" spellcheck="false">
+
+      <button class="btn" id="runBtn">Run connection check</button>
+      <div class="hint">Nothing is uploaded anywhere — the tests run in your browser against your project.</div>
+    </div>
+
+    <div class="card" id="resultCard" hidden>
+      <h2>Step 2 · Results</h2>
+      <div id="summary"></div>
+      <div id="checks"></div>
+    </div>
+
+    <div class="card" id="configCard" hidden>
+      <h2>Step 3 · Save it into your project</h2>
+      <p class="sub">Copy this into <code>js/config.js</code>, replacing the two placeholder lines.</p>
+      <pre id="snippet"></pre>
+      <button class="btn alt" id="copyBtn">Copy config</button>
+      <div class="hint">
+        Then commit and push:
+        <code>git add js/config.js &amp;&amp; git commit -m "Connect Supabase" &amp;&amp; git push</code>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Haven't set up the database yet?</h2>
+      <ol class="steps">
+        <li>Supabase → <strong>SQL Editor</strong> → New query</li>
+        <li>Paste all of <code>supabase/00_run_all.sql</code> → <strong>Run</strong></li>
+        <li>Supabase → <strong>Authentication → Users → Add user</strong>
+            (tick <strong>Auto Confirm User</strong>)</li>
+        <li>Edit the email in <code>supabase/04_create_owner.sql</code> → run it</li>
+      </ol>
+      <div class="hint">Full walkthrough in <a href="SETUP.md">SETUP.md</a>.</div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script>
+  (function () {
+    const $ = (id) => document.getElementById(id);
+    const checks = [];
+
+    function add(ok, name, detail) {
+      checks.push({ ok, name, detail });
+    }
+
+    function render() {
+      $('checks').innerHTML = checks.map((c) =>
+        '<div class="check"><div class="ico">' + (c.ok === true ? '✅' : c.ok === 'warn' ? '⚠️' : '❌') + '</div>' +
+        '<div class="body"><div class="name">' + c.name + '</div>' +
+        (c.detail ? '<div class="detail">' + c.detail + '</div>' : '') + '</div></div>'
+      ).join('');
+    }
+
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, (c) =>
+        ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+    }
+
+    $('runBtn').addEventListener('click', async function () {
+      const url = $('url').value.trim().replace(/\/+$/, '');
+      const key = $('key').value.trim();
+      checks.length = 0;
+      $('resultCard').hidden = false;
+      $('configCard').hidden = true;
+      $('summary').innerHTML = '<div class="alert warn">Running checks…</div>';
+      $('checks').innerHTML = '';
+      this.disabled = true;
+
+      try {
+        // ── format validation ────────────────────────────────────────────
+        const urlOk = /^https:\/\/[a-z0-9-]+\.supabase\.(co|in)$/i.test(url);
+        add(urlOk, 'Project URL format',
+          urlOk ? esc(url) : 'Expected something like <code>https://abcdefgh.supabase.co</code>');
+
+        let looksAnon = false, role = null;
+        try {
+          const payload = JSON.parse(atob(key.split('.')[1]));
+          role = payload.role;
+          looksAnon = role === 'anon';
+        } catch (_) {}
+
+        if (role === 'service_role') {
+          add(false, '🚨 THIS IS THE SERVICE_ROLE KEY — DO NOT USE IT',
+            'This key bypasses all security. Go to Settings → API → Rotate it now, ' +
+            'then come back with the <strong>anon / public</strong> key.');
+        } else {
+          add(looksAnon, 'Key is the anon / public key',
+            looksAnon ? 'role: anon ✓' : 'Could not read <code>role: anon</code> from this key.');
+        }
+
+        if (!urlOk || !looksAnon) {
+          $('summary').innerHTML = '<div class="alert err">Fix the values above, then run again.</div>';
+          render(); return;
+        }
+
+        const sb = window.supabase.createClient(url, key);
+
+        // ── reachability + tables ────────────────────────────────────────
+        const t0 = performance.now();
+        const cats = await sb.from('categories').select('*').order('sort_order');
+        const ms = Math.round(performance.now() - t0);
+
+        if (cats.error) {
+          const m = cats.error.message || '';
+          if (/relation .* does not exist|schema cache/i.test(m)) {
+            add(false, 'Database tables exist',
+              'Tables not found — run <code>supabase/00_run_all.sql</code> in the SQL Editor first.');
+          } else if (/Invalid API key|JWT/i.test(m)) {
+            add(false, 'Anon key accepted', 'Supabase rejected the key: ' + esc(m));
+          } else {
+            add(false, 'Reach the database', esc(m));
+          }
+          $('summary').innerHTML = '<div class="alert err">Connection failed — see below.</div>';
+          render(); return;
+        }
+
+        add(true, 'Connected to Supabase', 'Responded in ' + ms + ' ms');
+        add(cats.data.length > 0, 'Categories table readable',
+          cats.data.length + ' categor' + (cats.data.length === 1 ? 'y' : 'ies') + ' found' +
+          (cats.data.length === 0 ? ' — run <code>00_run_all.sql</code> to seed your menu.' : ''));
+
+        const items = await sb.from('menu_items').select('*');
+        add(!items.error && items.data.length > 0, 'Menu items table readable',
+          items.error ? esc(items.error.message)
+            : items.data.length + ' items found' +
+              (items.data.length === 0 ? ' — run the seed section of <code>00_run_all.sql</code>.' : ''));
+
+        const cafe = await sb.from('cafe_info').select('*').eq('id', 1).maybeSingle();
+        add(!cafe.error && !!cafe.data, 'Cafe info row exists',
+          cafe.error ? esc(cafe.error.message) : (cafe.data ? esc(cafe.data.name) : 'Missing row id=1'));
+
+        // ── is_admin() helper ────────────────────────────────────────────
+        const rpc = await sb.rpc('is_admin');
+        add(!rpc.error, 'Security function is_admin() installed',
+          rpc.error ? esc(rpc.error.message) + ' — re-run the RLS section of <code>00_run_all.sql</code>.'
+                    : 'Returns ' + rpc.data + ' for anonymous visitors (false is correct).');
+
+        // ── THE CRITICAL SECURITY TEST ───────────────────────────────────
+        const intrusion = await sb.from('menu_items')
+          .insert({ name: '__security_probe__', price: 0 });
+        const blocked = !!intrusion.error;
+        add(blocked, '🔒 Anonymous visitors CANNOT modify the menu',
+          blocked ? 'Write correctly rejected by Row Level Security.'
+                  : '<strong>DANGER: an anonymous write succeeded.</strong> RLS is not active — ' +
+                    're-run <code>supabase/02_rls_policies.sql</code> immediately, and delete the ' +
+                    'row named <code>__security_probe__</code>.');
+
+        const upd = await sb.from('menu_items').update({ price: 1 }).neq('id', '00000000-0000-0000-0000-000000000000');
+        add(!!upd.error, '🔒 Anonymous visitors CANNOT change prices',
+          upd.error ? 'Update correctly rejected by Row Level Security.'
+                    : '<strong>DANGER: anonymous price edit succeeded.</strong> Re-run the RLS file.');
+
+        // ── storage bucket ───────────────────────────────────────────────
+        const buckets = await sb.storage.from('menu-images').list('', { limit: 1 });
+        add(!buckets.error ? true : 'warn', 'Image storage bucket ready',
+          buckets.error ? 'Bucket <code>menu-images</code> not reachable — photo uploads will fail. ' +
+                          'Re-run the storage section of <code>00_run_all.sql</code>. (' + esc(buckets.error.message) + ')'
+                        : 'Bucket <code>menu-images</code> is available.');
+
+        // ── admin account present? ───────────────────────────────────────
+        const adminProbe = await sb.from('admin_users').select('user_id');
+        const adminReadable = !adminProbe.error;
+        add(adminReadable && adminProbe.data.length === 0 ? true : (adminReadable ? 'warn' : true),
+          '🔒 Admin list is not publicly exposed',
+          adminReadable && adminProbe.data.length === 0
+            ? 'Anonymous visitors see 0 rows — correct.'
+            : (adminReadable ? 'Anonymous visitors can see ' + adminProbe.data.length +
+                ' row(s). Re-run the RLS file.' : 'Correctly blocked.'));
+
+        // ── summary ──────────────────────────────────────────────────────
+        render();
+        const fails = checks.filter((c) => c.ok === false).length;
+        const warns = checks.filter((c) => c.ok === 'warn').length;
+
+        if (fails === 0) {
+          $('summary').innerHTML = '<div class="alert ok"><strong>✅ All checks passed' +
+            (warns ? ' (' + warns + ' warning)' : '') +
+            '.</strong> Your Supabase project is correctly configured and secure.</div>';
+          $('configCard').hidden = false;
+          $('snippet').textContent =
+            "window.HARMONY_CONFIG = {\n" +
+            "  SUPABASE_URL: '" + url + "',\n" +
+            "  SUPABASE_ANON_KEY: '" + key + "',\n\n" +
+            "  CACHE_KEY: 'harmony_menu_cache_v1',\n" +
+            "  CACHE_TTL_MS: 1000 * 60 * 60 * 24 * 7,\n" +
+            "  ENABLE_REALTIME: true,\n" +
+            "  STORAGE_BUCKET: 'menu-images',\n" +
+            "  MAX_IMAGE_MB: 2,\n" +
+            "};";
+        } else {
+          $('summary').innerHTML = '<div class="alert err"><strong>' + fails +
+            ' check(s) failed.</strong> Fix them below, then run again.</div>';
+        }
+      } catch (err) {
+        $('summary').innerHTML = '<div class="alert err">Unexpected error: ' + esc(err.message) + '</div>';
+        render();
+      } finally {
+        this.disabled = false;
+      }
+    });
+
+    $('copyBtn').addEventListener('click', function () {
+      navigator.clipboard.writeText($('snippet').textContent).then(() => {
+        this.textContent = 'Copied ✓';
+        setTimeout(() => { this.textContent = 'Copy config'; }, 2000);
+      });
+    });
+  })();
+  </script>
+</body>
+</html>

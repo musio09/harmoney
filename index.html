@@ -4,8 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Harmony Cafe Menu | ሃርመኒ ካፌ ሜኑ</title>
+  <meta name="description" content="Harmony Cafe menu — pizza, burgers, fresh juice, coffee and more. ASTU Gate, Adama.">
+  <meta name="theme-color" content="#7b1025">
+  <link rel="icon" href="harmony-logo.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -91,6 +95,7 @@
       top: 0;
       z-index: 99;
       scrollbar-width: none;
+      min-height: 51px;
     }
 
     .nav-tabs::-webkit-scrollbar { display: none; }
@@ -190,9 +195,19 @@
       align-items: center;
       justify-content: center;
       font-size: 20px;
+      overflow: hidden;
     }
 
-    /* Category-based icon bg colors */
+    /* Photo uploaded from the admin dashboard replaces the emoji circle */
+    .item-icon.has-img { background: var(--soft); }
+    .item-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Category-based icon bg colors (kept as fallback; DB value wins) */
     .menu-item[data-cat="pizza"] .item-icon { background: #fff3e0; }
     .menu-item[data-cat="burger"] .item-icon { background: #fce4ec; }
     .menu-item[data-cat="juice"] .item-icon { background: #e8f5e9; }
@@ -238,6 +253,17 @@
       margin-top: 3px;
     }
 
+    /* ── SOLD OUT ── */
+    .menu-item.sold-out {
+      opacity: .55;
+      background: var(--soft);
+    }
+
+    .menu-item.sold-out .item-price {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
     /* ── BADGE ── */
     .badge {
       display: inline-block;
@@ -262,19 +288,63 @@
       color: var(--white);
     }
 
-    /* ── FOOTER ── */
-    footer {
-      text-align: center;
-      padding: 20px 16px;
-      border-top: 1px solid var(--border);
-      font-size: 12px;
-      color: var(--muted);
+    .badge.sold {
+      background: #9e9e9e;
+      color: var(--white);
     }
 
-    footer a {
-      color: var(--secondary);
-      text-decoration: none;
-      font-weight: 600;
+    /* ── STATUS / LOADING ── */
+    .menu-status {
+      max-width: 820px;
+      margin: 16px auto 0;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      text-align: center;
+      background: var(--soft);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .menu-status.warn { background: #fff8e1; color: #8a6d1a; border-color: #f0e2b6; }
+    .menu-status.error { background: #fdecea; color: #a12d21; border-color: #f5c6c0; }
+
+    .menu-empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 16px;
+      font-size: 14px;
+    }
+
+    .skeleton-item {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+
+    .skeleton-dot, .skeleton-line {
+      background: linear-gradient(90deg, #eee 25%, #f6f6f6 50%, #eee 75%);
+      background-size: 400% 100%;
+      animation: shimmer 1.4s ease infinite;
+      border-radius: 6px;
+    }
+
+    .skeleton-dot { width: 44px; height: 44px; min-width: 44px; border-radius: 50%; }
+    .skeleton-line { height: 12px; flex: 1; }
+
+    @keyframes shimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .skeleton-dot, .skeleton-line { animation: none; }
+      html { scroll-behavior: auto; }
     }
 
     /* ── RESPONSIVE ── */
@@ -295,375 +365,48 @@
 
   <!-- ═══ HEADER ═══ -->
   <header>
-    <h1>🍽 HARMONY CAFE</h1>
-    <p>ሃርመኒ ካፌ • Good Food • Good Coffee • Good Vibes</p>
+    <h1 id="cafeName">🍽 HARMONY CAFE</h1>
+    <p id="cafeTagline">ሃርመኒ ካፌ • Good Food • Good Coffee • Good Vibes</p>
     <div class="header-contact">
-      <span>📍 ASTU Gate, Adama</span>
-      <a href="tel:+251911903172">📞 +251 911 90 31 72</a>
+      <span id="cafeAddress">📍 ASTU Gate, Adama</span>
+      <a id="cafePhone" href="tel:+251911903172">📞 +251 911 90 31 72</a>
     </div>
   </header>
 
-  <!-- ═══ CATEGORY TABS ═══ -->
-  <nav class="nav-tabs" id="categoryTabs">
-    <button class="nav-tab active" data-target="all">🔥 All</button>
-    <button class="nav-tab" data-target="pizza">🍕 Pizza</button>
-    <button class="nav-tab" data-target="burger">🍔 Burger</button>
-    <button class="nav-tab" data-target="juice">🥤 Juice</button>
-    <button class="nav-tab" data-target="coffee">☕ Coffee</button>
-    <button class="nav-tab" data-target="breakfast">🍳 Breakfast</button>
-    <button class="nav-tab" data-target="main">🍽 Main</button>
-    <button class="nav-tab" data-target="fastfood">🌭 Fast Food</button>
-  </nav>
+  <!-- ═══ CATEGORY TABS (rendered from the database) ═══ -->
+  <nav class="nav-tabs" id="categoryTabs"></nav>
 
-  <!-- ═══ MAIN CONTENT ═══ -->
-  <main>
+  <!-- ═══ STATUS BANNER ═══ -->
+  <div class="menu-status" id="menuStatus" hidden></div>
 
-    <!-- ── PIZZA ── -->
-    <section class="menu-section active" data-category="pizza">
-      <h2 class="section-title">🍕 Pizza <span>Freshly baked</span></h2>
-      <div class="menu-items">
-        <div class="menu-item" data-cat="pizza">
-          <div class="item-icon">🍕</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Margherita </span>
-              <span class="item-price">450 ETB</span>
-            </div>
-            <div class="item-desc">Tomato • Mozzarella • Basil</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="pizza">
-          <div class="item-icon">🍕</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Pepperoni<span class="badge new">NEW</span></span>
-              <span class="item-price">520 ETB</span>
-            </div>
-            <div class="item-desc">Pepperoni • Cheese • Tomato Sauce</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="pizza">
-          <div class="item-icon">🧀</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Cheese Lovers <span class="badge new">NEW</span></span>
-              <span class="item-price">480 ETB</span>
-            </div>
-            <div class="item-desc">Mozzarella • Cheddar • Parmesan</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="pizza">
-          <div class="item-icon">🌶️</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Spicy Veggie</span>
-              <span class="item-price">420 ETB</span>
-            </div>
-            <div class="item-desc">Bell Peppers • Olives • Onion • Jalapeño</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="pizza">
-          <div class="item-icon">🍗</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Chicken BBQ</span>
-              <span class="item-price">550 ETB</span>
-            </div>
-            <div class="item-desc">Grilled Chicken • BBQ Sauce • Cheese</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── BURGER ── -->
-    <section class="menu-section" data-category="burger">
-      <h2 class="section-title">🍔 Burgers <span>Juicy & fresh</span></h2>
-      <div class="menu-items">
-        <div class="menu-item" data-cat="burger">
-          <div class="item-icon">🍔</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Classic Beef Burger <span class="badge new">NEW</span></span>
-              <span class="item-price">420 ETB</span>
-            </div>
-            <div class="item-desc">Beef Patty • Lettuce • Tomato • Cheese</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="burger">
-          <div class="item-icon">🐔</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Chicken Crispy Burger</span>
-              <span class="item-price">400 ETB</span>
-            </div>
-            <div class="item-desc">Crispy Chicken • Coleslaw • Mayo</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="burger">
-          <div class="item-icon">🧀</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Double Cheese Burger <span class="badge new">NEW</span></span>
-              <span class="item-price">520 ETB</span>
-            </div>
-            <div class="item-desc">Double Beef • Double Cheese • Special Sauce</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="burger">
-          <div class="item-icon">🥬</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Veggie Burger</span>
-              <span class="item-price">350 ETB</span>
-            </div>
-            <div class="item-desc">Veggie Patty • Lettuce • Tomato • Avocado</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="burger">
-          <div class="item-icon">🔥</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Spicy BBQ Burger <span class="badge hot">HOT</span></span>
-              <span class="item-price">460 ETB</span>
-            </div>
-            <div class="item-desc">Beef Patty • Pepper Jack • Jalapeño • BBQ</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── JUICE ── -->
-    <section class="menu-section" data-category="juice">
-      <h2 class="section-title">🥤 Fresh Juice <span>100% natural</span></h2>
-      <div class="menu-items">
-        <div class="menu-item" data-cat="juice">
-          <div class="item-icon">🍊</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Fresh Orange Juice</span>
-              <span class="item-price">150 ETB</span>
-            </div>
-            <div class="item-desc">Freshly squeezed oranges</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="juice">
-          <div class="item-icon">🥭</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Mango Juice</span>
-              <span class="item-price">170 ETB</span>
-            </div>
-            <div class="item-desc">Ripe mango blended to perfection</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="juice">
-          <div class="item-icon">🍓</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Strawberry Smoothie <span class="badge new">NEW</span></span>
-              <span class="item-price">200 ETB</span>
-            </div>
-            <div class="item-desc">Strawberry • Yogurt • Honey</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="juice">
-          <div class="item-icon">🥑</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Avocado Juice</span>
-              <span class="item-price">180 ETB</span>
-            </div>
-            <div class="item-desc">Creamy avocado with milk</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="juice">
-          <div class="item-icon">🍍</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Pineapple Punch</span>
-              <span class="item-price">160 ETB</span>
-            </div>
-            <div class="item-desc">Pineapple • Lemon • Mint</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="juice">
-          <div class="item-icon">🥤</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Mix Fruit Juice</span>
-              <span class="item-price">200 ETB</span>
-            </div>
-            <div class="item-desc">Seasonal fruits blended fresh</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── COFFEE ── -->
-    <section class="menu-section" data-category="coffee">
-      <h2 class="section-title">☕ Coffee <span>Freshly brewed</span></h2>
-      <div class="menu-items">
-        <div class="menu-item" data-cat="coffee">
-          <div class="item-icon">☕</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Espresso</span>
-              <span class="item-price">120 ETB</span>
-            </div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="coffee">
-          <div class="item-icon">☕</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Cappuccino</span>
-              <span class="item-price">150 ETB</span>
-            </div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="coffee">
-          <div class="item-icon">☕</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Latte</span>
-              <span class="item-price">160 ETB</span>
-            </div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="coffee">
-          <div class="item-icon">🥛</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Macchiato</span>
-              <span class="item-price">140 ETB</span>
-            </div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="coffee">
-          <div class="item-icon">❄️</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Iced Coffee</span>
-              <span class="item-price">170 ETB</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── BREAKFAST ── -->
-    <section class="menu-section" data-category="breakfast">
-      <h2 class="section-title">🍳 Breakfast <span>Served all day</span></h2>
-      <div class="menu-items">
-        <div class="menu-item" data-cat="breakfast">
-          <div class="item-icon">🍳</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Special Breakfast</span>
-              <span class="item-price">200 ETB</span>
-            </div>
-            <div class="item-desc" lang="am">እንቁላል • ዳቦ • አቮካዶ</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="breakfast">
-          <div class="item-icon">🥗</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Fasting Breakfast</span>
-              <span class="item-price">220 ETB</span>
-            </div>
-            <div class="item-desc" lang="am">አትክልት • ዳቦ • ልዩ ጎን</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── MAIN ── -->
-    <section class="menu-section" data-category="main">
-      <h2 class="section-title">🍽 Main Dishes <span>Hearty meals</span></h2>
-      <div class="menu-items">
-        <div class="menu-item" data-cat="main">
-          <div class="item-icon">🍝</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Special Pasta</span>
-              <span class="item-price">280 ETB</span>
-            </div>
-            <div class="item-desc" lang="am">ፓስታ</div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="main">
-          <div class="item-icon">🍚</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Chicken Rice</span>
-              <span class="item-price">300 ETB</span>
-            </div>
-            <div class="item-desc" lang="am">ሩዝ • ዶሮ • ሰላጣ</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── FAST FOOD ── -->
-    <section class="menu-section" data-category="fastfood">
-      <h2 class="section-title">🌭 Fast Food <span>Quick bites</span></h2>
-      <div class="menu-items">
-        <div class="menu-item" data-cat="fastfood">
-          <div class="item-icon">🥪</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Chicken Sandwich</span>
-              <span class="item-price">400 ETB</span>
-            </div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="fastfood">
-          <div class="item-icon">🍟</div>
-          <div class="item-info">
-            <div class="item-top">
-              <span class="item-name">Fries (ቺፕስ)</span>
-              <span class="item-price">250 ETB</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
+  <!-- ═══ MAIN CONTENT (rendered from the database) ═══ -->
+  <main id="menuRoot">
+    <!-- loading skeleton, replaced on first paint -->
+    <div class="skeleton-item"><div class="skeleton-dot"></div><div class="skeleton-line"></div></div>
+    <div class="skeleton-item"><div class="skeleton-dot"></div><div class="skeleton-line"></div></div>
+    <div class="skeleton-item"><div class="skeleton-dot"></div><div class="skeleton-line"></div></div>
   </main>
 
   <!-- ═══ FOOTER ═══ -->
   <footer>
-    <p>Harmony Cafe &copy; 2026 — <a href="tel:+251911903172">Call us</a></p>
+    <p><span id="cafeFooter">Harmony Cafe &copy; 2026</span> — <a href="tel:+251911903172">Call us</a></p>
   </footer>
 
-  <!-- ═══ SCRIPT ═══ -->
-  <script>
-    (function() {
-      const tabs = document.querySelectorAll('.nav-tab');
-      const sections = document.querySelectorAll('.menu-section');
+  <style>
+    footer {
+      text-align: center;
+      padding: 20px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    footer a { color: var(--secondary); text-decoration: none; font-weight: 600; }
+  </style>
 
-      function showCategory(category) {
-        // update tabs
-        tabs.forEach(t => t.classList.toggle('active', t.dataset.target === category));
-
-        // update sections
-        if (category === 'all') {
-          sections.forEach(s => s.classList.add('active'));
-        } else {
-          sections.forEach(s => s.classList.toggle('active', s.dataset.category === category));
-        }
-      }
-
-      tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-          showCategory(this.dataset.target);
-        });
-      });
-
-      // Show all by default
-      showCategory('all');
-    })();
-  </script>
+  <!-- ═══ SCRIPTS ═══ -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/supabase-client.js" defer></script>
+  <script src="js/menu.js" defer></script>
 </body>
 </html>
