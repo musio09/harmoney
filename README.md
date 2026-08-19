@@ -9,7 +9,8 @@ dashboard — no code, no redeploys.
 | 📱 Customer menu | `https://musio09.github.io/harmoney/` |
 | 🔐 Owner dashboard | `https://musio09.github.io/harmoney/admin/` |
 
-**➡️ First-time setup: see [SETUP.md](SETUP.md)**
+**➡️ START HERE: [RUN_THIS.md](RUN_THIS.md)** — the exact 5 steps to run
+(detailed reference: [SETUP.md](SETUP.md))
 
 ---
 
@@ -59,6 +60,7 @@ js/
 admin/
   index.html                Login + dashboard UI
   admin.js                  Dashboard logic (CRUD, uploads, auth gate)
+RUN_THIS.md                 ▶️ The exact steps to run — start here
 connect.html                🔌 Connection checker — verifies your Supabase setup
 supabase/
   00_run_all.sql            ⭐ Everything below in one paste
@@ -70,6 +72,7 @@ dev/                        Local testing only — not used in production
   mock-supabase.js          In-memory fake Supabase backend
   test-e2e.js               48 automated end-to-end checks
   test-connect.js           22 checks for the connection checker
+  test-sql.js               50 checks running the SQL on real PostgreSQL
   serve-demo.js             Clickable local demo
 docs/
   github-pages-workflow.yml.txt   Optional Actions deploy template (not required)
@@ -112,6 +115,14 @@ node dev/serve-demo.js
 npm install --no-save jsdom @supabase/supabase-js
 node dev/test-e2e.js      # → 48 passed, 0 failed
 node dev/test-connect.js  # → 22 passed, 0 failed
+```
+
+The SQL is verified against a real PostgreSQL server (schema, seed data, and
+every RLS rule including privilege-escalation attempts):
+
+```bash
+npm install --no-save pg @embedded-postgres/linux-x64
+node dev/test-sql.js      # → 50 passed, 0 failed
 ```
 
 The tests boot a mock Supabase backend, load the real pages in jsdom, and verify

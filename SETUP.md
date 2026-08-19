@@ -20,6 +20,8 @@ Cost: **$0** (Supabase free tier + GitHub Pages).
 
 ## Step 2 — Create the database
 
+> 💡 For the condensed version of this whole guide see **[RUN_THIS.md](RUN_THIS.md)**.
+
 Open **SQL Editor** → **New query**, paste the entire contents of
 **`supabase/00_run_all.sql`**, and press **Run**. That one file creates the
 tables, applies all security policies, creates the image bucket, and loads your

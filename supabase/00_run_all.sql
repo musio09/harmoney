@@ -1,12 +1,15 @@
 -- ============================================================================
---  HARMONY CAFE — COMPLETE DATABASE SETUP (single paste)
+--  HARMONY CAFE — COMPLETE DATABASE SETUP  (STEP 1 of 2)
 --
---  Run this ONCE in: Supabase Dashboard → SQL Editor → New query → Run
---  It is safe to re-run: nothing is duplicated or overwritten.
+--  HOW TO RUN:
+--    Supabase Dashboard → SQL Editor → New query
+--    → paste this ENTIRE file → press RUN
 --
---  This file is the concatenation of 01_schema + 02_rls_policies +
---  03_seed_data, provided so you only have to paste once.
---  AFTER this, create your login and run 04_create_owner.sql.
+--  Safe to re-run: nothing is duplicated or overwritten.
+--  Expected result: "Success. No rows returned"
+--
+--  ⚠️  AFTER this, create your login in Authentication → Users,
+--      then run supabase/04_create_owner.sql  (STEP 2).
 -- ============================================================================
 
 create extension if not exists "pgcrypto";
@@ -330,3 +333,10 @@ join c on c.slug = v.cat
 where not exists (
   select 1 from public.menu_items m where m.name = v.name
 );
+
+-- ============================================================================
+--  ✅ STEP 1 COMPLETE.
+--
+--  NEXT: Authentication → Users → Add user → Create new user
+--        (tick "Auto Confirm User"), then run 04_create_owner.sql
+-- ============================================================================
