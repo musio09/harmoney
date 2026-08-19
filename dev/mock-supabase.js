@@ -75,7 +75,7 @@ function seed() {
     header_emoji: '🍽', currency: 'ETB', footer_text: 'Harmony Cafe © 2026',
   };
 
-  return { categories: cats, menu_items: items, cafe_info: [cafe] };
+  return { categories: cats, menu_items: items, cafe_info: [cafe], admin_users: [] };
 }
 
 function createServer() {
@@ -185,6 +185,11 @@ function createServer() {
 
       // ── RPC ───────────────────────────────────────────────────────────────
       if (path === '/rest/v1/rpc/is_admin') return send(res, 200, isAdminReq(req));
+
+      // ── STORAGE (list) ────────────────────────────────────────────────────
+      if (path.startsWith('/storage/v1/object/list/')) {
+        return send(res, 200, []);
+      }
 
       // ── STORAGE (upload) ──────────────────────────────────────────────────
       if (path.startsWith('/storage/v1/object/')) {

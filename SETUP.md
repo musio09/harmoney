@@ -20,16 +20,23 @@ Cost: **$0** (Supabase free tier + GitHub Pages).
 
 ## Step 2 — Create the database
 
-Open **SQL Editor** → **New query**, then run these files **in order**
-(copy the whole file contents, paste, press **Run**):
+Open **SQL Editor** → **New query**, paste the entire contents of
+**`supabase/00_run_all.sql`**, and press **Run**. That one file creates the
+tables, applies all security policies, creates the image bucket, and loads your
+existing 27 menu items and 7 categories.
+
+It is safe to re-run — nothing gets duplicated.
+
+<details>
+<summary>Prefer to run the steps separately?</summary>
 
 | Order | File | What it does |
 |---|---|---|
-| 1 | `supabase/01_schema.sql` | Creates tables, indexes, triggers, realtime |
-| 2 | `supabase/02_rls_policies.sql` | Security policies + the image storage bucket |
-| 3 | `supabase/03_seed_data.sql` | Loads your current 27 menu items and 7 categories |
+| 1 | `supabase/01_schema.sql` | Tables, indexes, triggers, realtime |
+| 2 | `supabase/02_rls_policies.sql` | Security policies + image storage bucket |
+| 3 | `supabase/03_seed_data.sql` | Your current 27 items and 7 categories |
 
-Each should finish with **Success. No rows returned** (file 3 may report rows).
+</details>
 
 ---
 
@@ -80,6 +87,21 @@ git add js/config.js
 git commit -m "Add Supabase public config"
 git push
 ```
+
+### 🔌 Verify the connection before you push
+
+Open **`connect.html`** in your browser (double-click the file, or visit
+`https://musio09.github.io/harmoney/connect.html` once deployed). Paste the same
+two values and press **Run connection check**. It will confirm:
+
+- Supabase is reachable and the tables exist
+- Your menu data loaded correctly
+- The image bucket is ready
+- **Anonymous visitors cannot modify your menu** ← the important one
+
+If every check passes it prints the exact `js/config.js` block to copy.
+If RLS is misconfigured it refuses to give you the config and tells you which
+SQL file to re-run. It also detects and rejects a service_role key.
 
 ### ⚠️ Which key is safe to commit?
 

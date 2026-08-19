@@ -59,7 +59,9 @@ js/
 admin/
   index.html                Login + dashboard UI
   admin.js                  Dashboard logic (CRUD, uploads, auth gate)
+connect.html                🔌 Connection checker — verifies your Supabase setup
 supabase/
+  00_run_all.sql            ⭐ Everything below in one paste
   01_schema.sql             Tables, indexes, triggers, realtime
   02_rls_policies.sql       Row Level Security + storage rules
   03_seed_data.sql          Your existing menu, ready to load
@@ -67,6 +69,7 @@ supabase/
 dev/                        Local testing only — not used in production
   mock-supabase.js          In-memory fake Supabase backend
   test-e2e.js               48 automated end-to-end checks
+  test-connect.js           22 checks for the connection checker
   serve-demo.js             Clickable local demo
 docs/
   github-pages-workflow.yml.txt   Optional Actions deploy template (not required)
@@ -107,8 +110,8 @@ node dev/serve-demo.js
 ```bash
 # run the automated test suite
 npm install --no-save jsdom @supabase/supabase-js
-node dev/test-e2e.js
-# → 48 passed, 0 failed
+node dev/test-e2e.js      # → 48 passed, 0 failed
+node dev/test-connect.js  # → 22 passed, 0 failed
 ```
 
 The tests boot a mock Supabase backend, load the real pages in jsdom, and verify
