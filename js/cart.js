@@ -1,89 +1,172 @@
-```javascript
 /* ============================================================================
- *  HARMONY CAFE — Shopping cart (self-contained add-on)
- *  ----------------------------------------------------------------------------
- *  • Does NOT touch js/menu.js.
- *  • Injects its own HTML + CSS.
- *  • Cart is saved in localStorage and survives refreshes.
- *  • No WhatsApp ordering.
+ * HARMONY CAFE — Customer Shopping Cart
+ * ----------------------------------------------------------------------------
+ * Works with the current Supabase-powered menu.js.
+ *
+ * Features:
+ * - Adds + buttons to available menu items
+ * - Cart drawer
+ * - Increase / decrease quantities
+ * - Clear cart
+ * - LocalStorage persistence
+ * - Automatically reconnects after menu.js refreshes the menu
+ * - No WhatsApp ordering
  * ==========================================================================*/
+
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'harmony_cart_v1';
-  var cart = load();
+  var STORAGE_KEY = 'harmony_cart_v2';
   var currency = 'ETB';
+  var cart = loadCart();
 
-  function esc(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  var cartFab = null;
+  var cartFabCount = null;
+  var overlay = null;
+  var drawer = null;
+  var cartBody = null;
+  var cartTotal = null;
+
+  var menuObserver = null;
+  var originalRenderMenu = null;
+
+  /* --------------------------------------------------------------------------
+   * Helpers
+   * ------------------------------------------------------------------------*/
+
+  function esc(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {
+      return {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[c];
     });
   }
 
-  function fmt(n) {
-    n = Number(n) || 0;
-    return (Number.isInteger(n) ? String(n) : n.toFixed(2)) + ' ' + currency;
+  function formatPrice(value) {
+    var n = Number(value) || 0;
+    var shown = Number.isInteger(n) ? String(n) : n.toFixed(2);
+    return shown + ' ' + currency;
   }
 
-  function load() {
+  function loadCart() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-    } catch (_) {
+      var saved = localStorage.getItem(STORAGE_KEY);
+
+      if (!saved) {
+        return {};
+      }
+
+      var parsed = JSON.parse(saved);
+
+      if (!parsed || typeof parsed !== 'object') {
+        return {};
+      }
+
+      return parsed;
+    } catch (error) {
+      console.warn('[Harmony Cart] Could not load saved cart:', error);
       return {};
     }
   }
 
-  function save() {
+  function saveCart() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
-    } catch (_) {}
+    } catch (error) {
+      console.warn('[Harmony Cart] Could not save cart:', error);
+    }
   }
 
-  function count() {
-    var n = 0;
-    Object.keys(cart).forEach(function (k) {
-      n += cart[k].qty;
+  function cartCount() {
+    var total = 0;
+
+    Object.keys(cart).forEach(function (key) {
+      var item = cart[key];
+
+      if (item && Number(item.qty) > 0) {
+        total += Number(item.qty);
+      }
     });
-    return n;
+
+    return total;
   }
 
-  function total() {
-    var t = 0;
-    Object.keys(cart).forEach(function (k) {
-      t += cart[k].qty * cart[k].price;
+  function cartTotalValue() {
+    var total = 0;
+
+    Object.keys(cart).forEach(function (key) {
+      var item = cart[key];
+
+      if (!item) return;
+
+      total += (Number(item.price) || 0) * (Number(item.qty) || 0);
     });
-    return t;
+
+    return total;
   }
 
-  function readItem(card) {
+  /* --------------------------------------------------------------------------
+   * Read a menu item from the DOM
+   * ------------------------------------------------------------------------*/
+
+  function readMenuItem(card) {
+    if (!card) return null;
+
     var nameEl = card.querySelector('.item-name');
     var priceEl = card.querySelector('.item-price');
 
-    if (!nameEl || !priceEl) return null;
+    if (!nameEl || !priceEl) {
+      return null;
+    }
 
+    /* Get only the direct text inside .item-name.
+       This prevents NEW / HOT / SOLD OUT badges from becoming part of the name. */
     var name = '';
 
-    nameEl.childNodes.forEach(function (n) {
-      if (n.nodeType === 3) name += n.textContent;
+    nameEl.childNodes.forEach(function (node) {
+      if (node.nodeType === 3) {
+        name += node.textContent;
+      }
     });
 
     name = name.trim();
 
-    var small = nameEl.querySelector('small');
-    var nameAm = small ? small.textContent.trim() : '';
+    if (!name) {
+      name = nameEl.textContent.trim();
+    }
 
-    var m = priceEl.textContent.trim().match(/([\d.,]+)\s*([A-Za-z]*)/);
+    var amEl = nameEl.querySelector('small');
+    var nameAm = amEl ? amEl.textContent.trim() : '';
 
-    if (!m) return null;
+    var priceText = priceEl.textContent.trim();
 
-    var price = parseFloat(m[1].replace(/,/g, ''));
+    var match = priceText.match(/([\d.,]+)\s*([A-Za-z]+)?/);
 
-    if (!isFinite(price)) return null;
+    if (!match) {
+      return null;
+    }
 
-    if (m[2]) currency = m[2];
+    var price = parseFloat(match[1].replace(/,/g, ''));
+
+    if (!isFinite(price)) {
+      return null;
+    }
+
+    if (match[2]) {
+      currency = match[2];
+    }
+
+    /*
+     * Name + price gives us a stable enough key for the current menu.
+     */
+    var key = name + '|' + price;
 
     return {
-      key: name + '|' + price,
+      key: key,
       name: name,
       nameAm: nameAm,
       price: price,
@@ -91,271 +174,490 @@
     };
   }
 
-  var CSS = [
-    '.cart-add{margin-left:auto;flex-shrink:0;width:34px;height:34px;border-radius:50%;border:1px solid var(--secondary,#087443);',
-    'background:var(--white,#fff);color:var(--secondary,#087443);font-size:20px;font-weight:800;line-height:1;cursor:pointer;',
-    'display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit}',
-    '.cart-add:hover{background:var(--secondary,#087443);color:#fff}',
-    '.cart-add:active{transform:scale(.92)}',
-    '.menu-item.sold-out .cart-add{display:none}',
-    '.menu-item .cart-add.in-cart{background:var(--secondary,#087443);color:#fff;font-size:12px}',
+  /* --------------------------------------------------------------------------
+   * CSS
+   * ------------------------------------------------------------------------*/
 
-    '.cart-fab{position:fixed;right:18px;bottom:18px;z-index:200;background:var(--primary,#7b1025);color:#fff;border:0;',
-    'border-radius:999px;padding:12px 18px;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.25);',
-    'display:flex;align-items:center;gap:8px;font-family:inherit;transition:transform .15s}',
+  var CSS = `
+    /* Cart add button ------------------------------------------------------ */
 
-    '.cart-fab:hover{transform:translateY(-2px)}',
-    '.cart-fab[hidden]{display:none}',
+    .harmony-cart-add {
+      flex-shrink: 0;
+      width: 34px;
+      height: 34px;
+      margin-left: 4px;
+      border-radius: 50%;
+      border: 1px solid var(--secondary, #087443);
+      background: var(--white, #fff);
+      color: var(--secondary, #087443);
+      font-size: 21px;
+      font-weight: 800;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .15s ease;
+      font-family: inherit;
+      padding: 0;
+    }
 
-    '.cart-fab .cart-fab-count{background:var(--gold,#b28a42);color:#fff;border-radius:999px;min-width:22px;height:22px;',
-    'display:inline-flex;align-items:center;justify-content:center;font-size:12px;padding:0 6px}',
+    .harmony-cart-add:hover {
+      background: var(--secondary, #087443);
+      color: #fff;
+      transform: scale(1.04);
+    }
 
-    '.cart-fab.bump{animation:cartBump .3s ease}',
+    .harmony-cart-add:active {
+      transform: scale(.92);
+    }
 
-    '@keyframes cartBump{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}',
+    .harmony-cart-add.in-cart {
+      background: var(--secondary, #087443);
+      color: #fff;
+      font-size: 12px;
+    }
 
-    '.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;opacity:0;visibility:hidden;',
-    'transition:opacity .25s,visibility .25s}',
+    .menu-item.sold-out .harmony-cart-add {
+      display: none;
+    }
 
-    '.cart-overlay.open{opacity:1;visibility:visible}',
+    /* Floating cart button ------------------------------------------------ */
 
-    '.cart-drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--cream,#fbfaf6);z-index:301;',
-    'display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s ease;',
-    'box-shadow:-6px 0 30px rgba(0,0,0,.2);font-family:inherit}',
+    .harmony-cart-fab {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 200;
+      background: var(--primary, #7b1025);
+      color: #fff;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 6px 22px rgba(0,0,0,.25);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: inherit;
+      transition: transform .15s ease;
+    }
 
-    '.cart-drawer.open{transform:translateX(0)}',
+    .harmony-cart-fab:hover {
+      transform: translateY(-2px);
+    }
 
-    '.cart-head{background:linear-gradient(135deg,var(--primary,#7b1025) 0%,#9a1a32 100%);',
-    'color:#fff;padding:18px 20px;display:flex;align-items:center;justify-content:space-between}',
+    .harmony-cart-fab[hidden] {
+      display: none;
+    }
 
-    '.cart-head h2{font-size:18px;font-weight:800;margin:0}',
+    .harmony-cart-count {
+      background: var(--gold, #b28a42);
+      color: #fff;
+      border-radius: 999px;
+      min-width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      padding: 0 6px;
+    }
 
-    '.cart-close{background:transparent;border:0;color:#fff;font-size:26px;line-height:1;cursor:pointer;font-family:inherit}',
+    .harmony-cart-fab.bump {
+      animation: harmonyCartBump .3s ease;
+    }
 
-    '.cart-body{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px}',
+    @keyframes harmonyCartBump {
+      0% {
+        transform: scale(1);
+      }
 
-    '.cart-empty{text-align:center;color:var(--muted,#6b6b6b);padding:50px 16px;font-size:14px}',
+      50% {
+        transform: scale(1.12);
+      }
 
-    '.cart-line{background:#fff;border:1px solid var(--border,#e6e0d4);border-radius:var(--radius,14px);',
-    'padding:12px 14px;display:flex;align-items:center;gap:10px}',
+      100% {
+        transform: scale(1);
+      }
+    }
 
-    '.cart-line-info{flex:1;min-width:0}',
+    /* Overlay ------------------------------------------------------------- */
 
-    '.cart-line-name{font-weight:700;font-size:14px}',
+    .harmony-cart-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 300;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .25s ease, visibility .25s ease;
+    }
 
-    '.cart-line-name small{font-weight:500;font-size:11px;color:var(--muted,#6b6b6b)}',
+    .harmony-cart-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
 
-    '.cart-line-price{font-size:12px;color:var(--muted,#6b6b6b);margin-top:2px}',
+    /* Drawer -------------------------------------------------------------- */
 
-    '.cart-qty{display:flex;align-items:center;gap:6px}',
+    .harmony-cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(420px, 100%);
+      background: var(--cream, #fbfaf6);
+      z-index: 301;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform .28s ease;
+      box-shadow: -6px 0 30px rgba(0,0,0,.2);
+      font-family: inherit;
+    }
 
-    '.cart-qty button{width:28px;height:28px;border-radius:50%;border:1px solid var(--border,#e6e0d4);',
-    'background:var(--soft,#f4f1e9);font-size:16px;font-weight:800;cursor:pointer;',
-    'font-family:inherit;color:var(--text,#1e1e1e)}',
+    .harmony-cart-drawer.open {
+      transform: translateX(0);
+    }
 
-    '.cart-qty button:hover{border-color:var(--secondary,#087443);color:var(--secondary,#087443)}',
+    /* Header -------------------------------------------------------------- */
 
-    '.cart-qty span{min-width:20px;text-align:center;font-weight:800;font-size:14px}',
+    .harmony-cart-head {
+      background: linear-gradient(
+        135deg,
+        var(--primary, #7b1025) 0%,
+        #9a1a32 100%
+      );
+      color: #fff;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-    '.cart-line-sub{font-weight:800;color:var(--secondary,#087443);white-space:nowrap;font-size:14px;',
-    'min-width:70px;text-align:right}',
+    .harmony-cart-head h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin: 0;
+    }
 
-    '.cart-foot{border-top:1px solid var(--border,#e6e0d4);padding:14px 16px 18px;background:#fff}',
+    .harmony-cart-close {
+      background: transparent;
+      border: 0;
+      color: #fff;
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 0;
+    }
 
-    '.cart-total{display:flex;justify-content:space-between;font-size:17px;font-weight:800;margin-bottom:12px}',
+    /* Body ---------------------------------------------------------------- */
 
-    '.cart-total span:last-child{color:var(--secondary,#087443)}',
+    .harmony-cart-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
-    '.cart-actions{display:flex;gap:8px}',
+    .harmony-cart-empty {
+      text-align: center;
+      color: var(--muted, #6b6b6b);
+      padding: 50px 16px;
+      font-size: 14px;
+    }
 
-    '.cart-btn{flex:1;padding:12px;border-radius:999px;border:0;font-weight:800;font-size:14px;',
-    'cursor:pointer;font-family:inherit;text-align:center;text-decoration:none;display:block}',
+    /* Cart item ----------------------------------------------------------- */
 
-    '.cart-btn.ghost{background:var(--soft,#f4f1e9);color:var(--text,#1e1e1e)}',
+    .harmony-cart-line {
+      background: #fff;
+      border: 1px solid var(--border, #e6e0d4);
+      border-radius: var(--radius, 14px);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-    '@media (max-width:600px){.cart-add{width:30px;height:30px;font-size:18px}.cart-fab{right:12px;bottom:12px;padding:11px 16px}}'
-  ].join('\n');
+    .harmony-cart-line-info {
+      flex: 1;
+      min-width: 0;
+    }
 
-  var HTML =
-    '<button class="cart-fab" id="cartFab" type="button" aria-label="Open cart" hidden>' +
-      '🛒 Cart <span class="cart-fab-count" id="cartFabCount">0</span>' +
-    '</button>' +
+    .harmony-cart-line-name {
+      font-weight: 700;
+      font-size: 14px;
+    }
 
-    '<div class="cart-overlay" id="cartOverlay"></div>' +
+    .harmony-cart-line-name small {
+      font-weight: 500;
+      font-size: 11px;
+      color: var(--muted, #6b6b6b);
+    }
 
-    '<aside class="cart-drawer" id="cartDrawer" aria-label="Your order" role="dialog">' +
+    .harmony-cart-line-price {
+      font-size: 12px;
+      color: var(--muted, #6b6b6b);
+      margin-top: 2px;
+    }
 
-      '<div class="cart-head">' +
-        '<h2>🛒 Your Order</h2>' +
-        '<button class="cart-close" id="cartClose" type="button" aria-label="Close">&times;</button>' +
-      '</div>' +
+    /* Quantity ------------------------------------------------------------ */
 
-      '<div class="cart-body" id="cartBody"></div>' +
+    .harmony-cart-qty {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-      '<div class="cart-foot">' +
-        '<div class="cart-total">' +
-          '<span>Total</span>' +
-          '<span id="cartTotal">0 ETB</span>' +
-        '</div>' +
+    .harmony-cart-qty button {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--border, #e6e0d4);
+      background: var(--soft, #f4f1e9);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--text, #1e1e1e);
+      padding: 0;
+    }
 
-        '<div class="cart-actions">' +
-          '<button class="cart-btn ghost" id="cartClear" type="button">Clear</button>' +
-        '</div>' +
-      '</div>' +
+    .harmony-cart-qty button:hover {
+      border-color: var(--secondary, #087443);
+      color: var(--secondary, #087443);
+    }
 
-    '</aside>';
+    .harmony-cart-qty span {
+      min-width: 20px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 14px;
+    }
 
-  var fab, fabCount, overlay, drawer, body, totalEl;
+    /* Subtotal ------------------------------------------------------------ */
 
-  function mount() {
+    .harmony-cart-line-sub {
+      font-weight: 800;
+      color: var(--secondary, #087443);
+      white-space: nowrap;
+      font-size: 14px;
+      min-width: 70px;
+      text-align: right;
+    }
+
+    /* Footer -------------------------------------------------------------- */
+
+    .harmony-cart-foot {
+      border-top: 1px solid var(--border, #e6e0d4);
+      padding: 14px 16px 18px;
+      background: #fff;
+    }
+
+    .harmony-cart-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .harmony-cart-total span:last-child {
+      color: var(--secondary, #087443);
+    }
+
+    .harmony-cart-clear {
+      width: 100%;
+      padding: 12px;
+      border-radius: 999px;
+      border: 0;
+      background: var(--soft, #f4f1e9);
+      color: var(--text, #1e1e1e);
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .harmony-cart-clear:hover {
+      background: #eae5d9;
+    }
+
+    /* Mobile -------------------------------------------------------------- */
+
+    @media (max-width: 600px) {
+      .harmony-cart-add {
+        width: 30px;
+        height: 30px;
+        font-size: 18px;
+      }
+
+      .harmony-cart-fab {
+        right: 12px;
+        bottom: 12px;
+        padding: 11px 16px;
+      }
+
+      .harmony-cart-line {
+        padding: 11px 10px;
+      }
+
+      .harmony-cart-line-sub {
+        min-width: 62px;
+        font-size: 13px;
+      }
+    }
+  `;
+
+  /* --------------------------------------------------------------------------
+   * Cart HTML
+   * ------------------------------------------------------------------------*/
+
+  function createCartUI() {
+    if (document.getElementById('harmonyCartRoot')) {
+      return;
+    }
+
     var style = document.createElement('style');
-    style.id = 'cartStyles';
+    style.id = 'harmonyCartStyles';
     style.textContent = CSS;
     document.head.appendChild(style);
 
-    var wrap = document.createElement('div');
-    wrap.id = 'cartRoot';
-    wrap.innerHTML = HTML;
-    document.body.appendChild(wrap);
+    var root = document.createElement('div');
+    root.id = 'harmonyCartRoot';
 
-    fab = document.getElementById('cartFab');
-    fabCount = document.getElementById('cartFabCount');
-    overlay = document.getElementById('cartOverlay');
-    drawer = document.getElementById('cartDrawer');
-    body = document.getElementById('cartBody');
-    totalEl = document.getElementById('cartTotal');
+    root.innerHTML =
+      '<button class="harmony-cart-fab" id="harmonyCartFab" type="button" hidden>' +
+        '🛒 Cart ' +
+        '<span class="harmony-cart-count" id="harmonyCartCount">0</span>' +
+      '</button>' +
 
-    fab.addEventListener('click', open);
+      '<div class="harmony-cart-overlay" id="harmonyCartOverlay"></div>' +
 
-    overlay.addEventListener('click', close);
+      '<aside class="harmony-cart-drawer" id="harmonyCartDrawer" role="dialog" aria-label="Your cart">' +
 
-    document.getElementById('cartClose').addEventListener('click', close);
+        '<div class="harmony-cart-head">' +
+          '<h2>🛒 Your Cart</h2>' +
+          '<button class="harmony-cart-close" id="harmonyCartClose" type="button" aria-label="Close cart">' +
+            '&times;' +
+          '</button>' +
+        '</div>' +
 
-    document.getElementById('cartClear').addEventListener('click', function () {
-      if (!count() || confirm('Clear your cart?')) {
-        cart = {};
-        save();
-        render();
+        '<div class="harmony-cart-body" id="harmonyCartBody"></div>' +
+
+        '<div class="harmony-cart-foot">' +
+          '<div class="harmony-cart-total">' +
+            '<span>Total</span>' +
+            '<span id="harmonyCartTotal">0 ETB</span>' +
+          '</div>' +
+
+          '<button class="harmony-cart-clear" id="harmonyCartClear" type="button">' +
+            'Clear Cart' +
+          '</button>' +
+        '</div>' +
+
+      '</aside>';
+
+    document.body.appendChild(root);
+
+    cartFab = document.getElementById('harmonyCartFab');
+    cartFabCount = document.getElementById('harmonyCartCount');
+    overlay = document.getElementById('harmonyCartOverlay');
+    drawer = document.getElementById('harmonyCartDrawer');
+    cartBody = document.getElementById('harmonyCartBody');
+    cartTotal = document.getElementById('harmonyCartTotal');
+
+    cartFab.addEventListener('click', openCart);
+
+    overlay.addEventListener('click', closeCart);
+
+    document.getElementById('harmonyCartClose')
+      .addEventListener('click', closeCart);
+
+    document.getElementById('harmonyCartClear')
+      .addEventListener('click', clearCart);
+
+    cartBody.addEventListener('click', function (event) {
+      var button = event.target.closest('[data-cart-action]');
+
+      if (!button) {
+        return;
       }
+
+      var action = button.getAttribute('data-cart-action');
+      var key = button.getAttribute('data-cart-key');
+
+      if (!key || !cart[key]) {
+        return;
+      }
+
+      if (action === 'increase') {
+        cart[key].qty += 1;
+      }
+
+      if (action === 'decrease') {
+        cart[key].qty -= 1;
+
+        if (cart[key].qty <= 0) {
+          delete cart[key];
+        }
+      }
+
+      saveCart();
+      renderCart();
+      decorateMenu();
     });
 
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') close();
-    });
-
-    body.addEventListener('click', function (e) {
-      var btn = e.target.closest('[data-act]');
-      if (!btn) return;
-
-      var key = btn.getAttribute('data-key');
-      var line = cart[key];
-
-      if (!line) return;
-
-      if (btn.dataset.act === 'inc') line.qty += 1;
-
-      if (btn.dataset.act === 'dec') line.qty -= 1;
-
-      if (btn.dataset.act === 'del' || line.qty <= 0) {
-        delete cart[key];
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        closeCart();
       }
-
-      save();
-      render();
     });
   }
 
-  function open() {
+  /* --------------------------------------------------------------------------
+   * Open / close
+   * ------------------------------------------------------------------------*/
+
+  function openCart() {
+    if (!drawer || !overlay) {
+      return;
+    }
+
     drawer.classList.add('open');
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
 
-  function close() {
+  function closeCart() {
+    if (!drawer || !overlay) {
+      return;
+    }
+
     drawer.classList.remove('open');
     overlay.classList.remove('open');
     document.body.style.overflow = '';
   }
 
-  var observer = null;
-  var decorating = false;
+  /* --------------------------------------------------------------------------
+   * Add item
+   * ------------------------------------------------------------------------*/
 
-  function decorate() {
-    var root = document.getElementById('menuRoot');
-
-    if (!root || decorating) return;
-
-    decorating = true;
-
-    if (observer) observer.disconnect();
-
-    try {
-      decorateNow(root);
-    } finally {
-      decorating = false;
-
-      if (observer) {
-        observer.observe(root, { childList: true });
-      }
-    }
-  }
-
-  function decorateNow(root) {
-    root.querySelectorAll('.menu-item').forEach(function (card) {
-
-      if (card.querySelector('.cart-add')) {
-        syncButton(card);
-        return;
-      }
-
-      var item = readItem(card);
-
-      if (!item) return;
-
-      var btn = document.createElement('button');
-
-      btn.type = 'button';
-      btn.className = 'cart-add';
-      btn.setAttribute('aria-label', 'Add ' + item.name + ' to cart');
-      btn.textContent = '+';
-
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        add(readItem(card) || item);
-      });
-
-      card.appendChild(btn);
-
-      syncButton(card);
-    });
-  }
-
-  function syncButton(card) {
-    var btn = card.querySelector('.cart-add');
-    var item = readItem(card);
-
-    if (!btn || !item) return;
-
-    var line = cart[item.key];
-
-    var label = line ? '×' + line.qty : '+';
-
-    if (btn.textContent !== label) {
-      btn.textContent = label;
+  function addToCart(item) {
+    if (!item) {
+      return;
     }
 
-    if (btn.classList.contains('in-cart') !== !!line) {
-      btn.classList.toggle('in-cart', !!line);
-    }
-  }
+    var existing = cart[item.key];
 
-  function add(item) {
-    if (!item) return;
-
-    var line = cart[item.key];
-
-    if (line) {
-      line.qty += 1;
+    if (existing) {
+      existing.qty += 1;
     } else {
       cart[item.key] = {
         name: item.name,
@@ -366,135 +668,344 @@
       };
     }
 
-    save();
-    render();
+    saveCart();
+    renderCart();
+    decorateMenu();
 
-    fab.classList.remove('bump');
-    void fab.offsetWidth;
-    fab.classList.add('bump');
+    if (cartFab) {
+      cartFab.classList.remove('bump');
+
+      /* Force animation restart */
+      void cartFab.offsetWidth;
+
+      cartFab.classList.add('bump');
+    }
   }
 
-  function render() {
-    var keys = Object.keys(cart);
-    var n = count();
+  /* --------------------------------------------------------------------------
+   * Clear
+   * ------------------------------------------------------------------------*/
 
-    fabCount.textContent = n;
-    fab.hidden = n === 0;
+  function clearCart() {
+    if (cartCount() === 0) {
+      return;
+    }
+
+    if (!window.confirm('Clear your cart?')) {
+      return;
+    }
+
+    cart = {};
+
+    saveCart();
+    renderCart();
+    decorateMenu();
+  }
+
+  /* --------------------------------------------------------------------------
+   * Add buttons to menu
+   * ------------------------------------------------------------------------*/
+
+  function decorateMenu() {
+    var root = document.getElementById('menuRoot');
+
+    if (!root) {
+      return;
+    }
+
+    var cards = root.querySelectorAll('.menu-item');
+
+    cards.forEach(function (card) {
+      var item = readMenuItem(card);
+
+      if (!item) {
+        return;
+      }
+
+      /*
+       * Sold-out items should never have an add button.
+       */
+      if (card.classList.contains('sold-out')) {
+        var oldSoldButton = card.querySelector('.harmony-cart-add');
+
+        if (oldSoldButton) {
+          oldSoldButton.remove();
+        }
+
+        return;
+      }
+
+      /*
+       * Put the button inside .item-top so it sits beside the price.
+       */
+      var top = card.querySelector('.item-top');
+
+      if (!top) {
+        return;
+      }
+
+      var button = top.querySelector('.harmony-cart-add');
+
+      if (!button) {
+        button = document.createElement('button');
+
+        button.type = 'button';
+        button.className = 'harmony-cart-add';
+
+        button.addEventListener('click', function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          var freshItem = readMenuItem(card);
+
+          if (freshItem) {
+            addToCart(freshItem);
+          }
+        });
+
+        top.appendChild(button);
+      }
+
+      var line = cart[item.key];
+
+      button.textContent = line ? '×' + line.qty : '+';
+
+      button.setAttribute(
+        'aria-label',
+        line
+          ? 'Add another ' + item.name
+          : 'Add ' + item.name + ' to cart'
+      );
+
+      button.classList.toggle('in-cart', !!line);
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+   * Render cart
+   * ------------------------------------------------------------------------*/
+
+  function renderCart() {
+    if (!cartFab || !cartFabCount || !cartBody || !cartTotal) {
+      return;
+    }
+
+    var count = cartCount();
+    var keys = Object.keys(cart);
+
+    cartFabCount.textContent = count;
+
+    /*
+     * Only show floating cart button when something is inside the cart.
+     */
+    cartFab.hidden = count === 0;
 
     if (!keys.length) {
-
-      body.innerHTML =
-        '<div class="cart-empty">' +
-        'Your cart is empty.<br>' +
-        'Tap <b>+</b> on any menu item to add it.' +
+      cartBody.innerHTML =
+        '<div class="harmony-cart-empty">' +
+          'Your cart is empty.<br><br>' +
+          'Tap <b>+</b> on any menu item to add it.' +
         '</div>';
-
     } else {
-
-      body.innerHTML = keys.map(function (k) {
-
-        var l = cart[k];
+      cartBody.innerHTML = keys.map(function (key) {
+        var item = cart[key];
 
         return (
-          '<div class="cart-line">' +
+          '<div class="harmony-cart-line">' +
 
-            '<div class="cart-line-info">' +
+            '<div class="harmony-cart-line-info">' +
 
-              '<div class="cart-line-name">' +
-                esc(l.name) +
-                (l.nameAm ? ' <small>' + esc(l.nameAm) + '</small>' : '') +
+              '<div class="harmony-cart-line-name">' +
+                esc(item.name) +
+                (
+                  item.nameAm
+                    ? ' <small>' + esc(item.nameAm) + '</small>'
+                    : ''
+                ) +
               '</div>' +
 
-              '<div class="cart-line-price">' +
-                esc(fmt(l.price)) +
+              '<div class="harmony-cart-line-price">' +
+                esc(formatPrice(item.price)) +
                 ' each' +
               '</div>' +
 
             '</div>' +
 
-            '<div class="cart-qty">' +
+            '<div class="harmony-cart-qty">' +
 
-              '<button type="button" data-act="dec" data-key="' +
-                esc(k) +
-                '" aria-label="Decrease">−</button>' +
+              '<button type="button"' +
+                ' data-cart-action="decrease"' +
+                ' data-cart-key="' + esc(key) + '"' +
+                ' aria-label="Decrease quantity">' +
+                '−' +
+              '</button>' +
 
               '<span>' +
-                l.qty +
+                esc(item.qty) +
               '</span>' +
 
-              '<button type="button" data-act="inc" data-key="' +
-                esc(k) +
-                '" aria-label="Increase">+</button>' +
+              '<button type="button"' +
+                ' data-cart-action="increase"' +
+                ' data-cart-key="' + esc(key) + '"' +
+                ' aria-label="Increase quantity">' +
+                '+' +
+              '</button>' +
 
             '</div>' +
 
-            '<div class="cart-line-sub">' +
-              esc(fmt(l.qty * l.price)) +
+            '<div class="harmony-cart-line-sub">' +
+              esc(formatPrice(item.qty * item.price)) +
             '</div>' +
 
           '</div>'
         );
-
       }).join('');
     }
 
-    totalEl.textContent = fmt(total());
-
-    var root = document.getElementById('menuRoot');
-
-    if (root) {
-      root.querySelectorAll('.menu-item').forEach(syncButton);
-    }
+    cartTotal.textContent = formatPrice(cartTotalValue());
   }
 
-  function init() {
-    mount();
+  /* --------------------------------------------------------------------------
+   * Keep cart attached when menu.js replaces menuRoot.innerHTML
+   * ------------------------------------------------------------------------*/
 
-    render();
-
-    decorate();
-
+  function watchMenu() {
     var root = document.getElementById('menuRoot');
 
-    if (root && window.MutationObserver) {
-
-      observer = new MutationObserver(decorate);
-
-      observer.observe(root, {
-        childList: true
-      });
+    if (!root || !window.MutationObserver) {
+      return;
     }
+
+    if (menuObserver) {
+      menuObserver.disconnect();
+    }
+
+    menuObserver = new MutationObserver(function () {
+      decorateMenu();
+    });
+
+    menuObserver.observe(root, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+   * Hook into HarmonyMenu.renderMenu
+   *
+   * menu.js exposes:
+   * window.HarmonyMenu = { renderMenu, showCategory, formatPrice };
+   *
+   * We wrap renderMenu so every Supabase refresh gets cart buttons again.
+   * ------------------------------------------------------------------------*/
+
+  function hookMenuRenderer() {
+    if (
+      !window.HarmonyMenu ||
+      typeof window.HarmonyMenu.renderMenu !== 'function'
+    ) {
+      return;
+    }
+
+    if (window.HarmonyMenu.renderMenu.__harmonyCartWrapped) {
+      return;
+    }
+
+    originalRenderMenu = window.HarmonyMenu.renderMenu;
+
+    function wrappedRenderMenu(data) {
+      originalRenderMenu(data);
+
+      /*
+       * menu.js has finished replacing #menuRoot.
+       * Add the cart buttons immediately.
+       */
+      setTimeout(function () {
+        decorateMenu();
+        renderCart();
+      }, 0);
+    }
+
+    wrappedRenderMenu.__harmonyCartWrapped = true;
+
+    window.HarmonyMenu.renderMenu = wrappedRenderMenu;
+  }
+
+  /* --------------------------------------------------------------------------
+   * Init
+   * ------------------------------------------------------------------------*/
+
+  function init() {
+    createCartUI();
+
+    renderCart();
+
+    /*
+     * menu.js has already loaded because both scripts are defer and
+     * cart.js appears after menu.js in index.html.
+     */
+    hookMenuRenderer();
+
+    /*
+     * Handle a menu that has already rendered.
+     */
+    decorateMenu();
+
+    /*
+     * Watch future Supabase menu refreshes.
+     */
+    watchMenu();
+
+    /*
+     * Small delayed retry in case menu.js is still finishing its first
+     * asynchronous render.
+     */
+    setTimeout(function () {
+      hookMenuRenderer();
+      decorateMenu();
+      renderCart();
+    }, 100);
+
+    setTimeout(function () {
+      hookMenuRenderer();
+      decorateMenu();
+      renderCart();
+    }, 1000);
   }
 
   if (document.readyState === 'loading') {
-
     document.addEventListener('DOMContentLoaded', init);
-
   } else {
-
     init();
-
   }
 
+  /* --------------------------------------------------------------------------
+   * Public API
+   * ------------------------------------------------------------------------*/
+
   window.HarmonyCart = {
-    add: add,
-    open: open,
-    close: close,
-    render: render,
+    add: addToCart,
+
+    open: openCart,
+
+    close: closeCart,
+
+    render: renderCart,
 
     items: function () {
       return JSON.parse(JSON.stringify(cart));
     },
 
-    total: total,
-    count: count,
+    total: cartTotalValue,
+
+    count: cartCount,
 
     clear: function () {
       cart = {};
-      save();
-      render();
+      saveCart();
+      renderCart();
+      decorateMenu();
     }
   };
 
 })();
-```
