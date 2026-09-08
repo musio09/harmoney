@@ -868,28 +868,40 @@
   /* --------------------------------------------------------------------------
    * Keep cart attached when menu.js replaces menuRoot.innerHTML
    * ------------------------------------------------------------------------*/
+function watchMenu() {
+  var root = document.getElementById('menuRoot');
 
-  function watchMenu() {
-    var root = document.getElementById('menuRoot');
-
-    if (!root || !window.MutationObserver) {
-      return;
-    }
-
-    if (menuObserver) {
-      menuObserver.disconnect();
-    }
-
-    menuObserver = new MutationObserver(function () {
-      decorateMenu();
-    });
-
-    menuObserver.observe(root, {
-      childList: true,
-      subtree: true
-    });
+  if (!root || !window.MutationObserver) {
+    return;
   }
 
+  if (menuObserver) {
+    menuObserver.disconnect();
+  }
+
+  menuObserver = new MutationObserver(function () {
+    setTimeout(function () {
+      decorateMenu();
+      renderCart();
+    }, 0);
+  });
+
+  /*
+   * IMPORTANT:
+   * Do NOT use subtree:true here.
+   *
+   * menu.js replaces the direct contents of #menuRoot when
+   * Supabase refreshes the menu. We only need to watch those
+   * direct changes.
+   *
+   * This prevents the observer from watching the + buttons
+   * that decorateMenu() itself creates.
+   */
+  menuObserver.observe(root, {
+    childList: true,
+    subtree: false
+  });
+}
   /* --------------------------------------------------------------------------
    * Hook into HarmonyMenu.renderMenu
    *
