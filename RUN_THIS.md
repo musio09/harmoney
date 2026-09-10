@@ -145,7 +145,8 @@ Wait ~1 minute, then:
 
 1. Open the **admin** URL and log in with your Step 3 email + password.
 2. Find **Margherita** → **Edit** → change price `450` → `499` → **Save item**.
-3. Open the **menu** URL on your phone → it shows **499 ETB**. ✅
+3. Open the **menu** URL on your phone → it shows **499 ETB**, with the Amharic
+   name `ማርጋሪታ` under the English one. ✅
 
 Your existing QR code still works — the menu URL never changed.
 
@@ -169,8 +170,10 @@ Your existing QR code still works — the menu URL never changed.
 - ✅ Database schema — 4 tables, indexes, auto-timestamps
 - ✅ Security policies — customers read-only, only you can edit
 - ✅ Your existing 27 items + 7 categories ready to load
+- ✅ Amharic name for every item and category — the menu shows English + Amharic
+  (`Burger በርገር`), editable from the dashboard
 - ✅ Image storage bucket
 - ✅ Live updates (menu refreshes without reload)
 - ✅ Admin dashboard with login
-- ✅ **120 automated tests passing**, including the SQL verified against a real
+- ✅ **143 automated tests passing**, including the SQL verified against a real
   PostgreSQL server — schema, seed data, and every permission rule

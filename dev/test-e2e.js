@@ -147,6 +147,75 @@ async function main() {
   check('data-cat attribute drives category colours',
     !!cw.document.querySelector('.menu-item[data-cat="pizza"]'));
 
+  // ── bilingual names: English + Amharic on every item ──────────────────────
+  /** English name = direct text of .item-name, Amharic name = its <small> */
+  const readNames = (doc) => Array.from(doc.querySelectorAll('.menu-item')).map((card) => {
+    const nameEl = card.querySelector('.item-name');
+    let en = '';
+    nameEl.childNodes.forEach((n) => { if (n.nodeType === 3) en += n.textContent; });
+    const am = nameEl.querySelector('small.item-name-am');
+    const first = nameEl.firstChild;
+    return {
+      en: en.trim(),
+      firstText: first && first.nodeType === 3 ? first.textContent.trim() : '',
+      am: am ? am.textContent.trim() : '',
+      lang: am ? am.getAttribute('lang') : null,
+    };
+  });
+
+  const names = readNames(cw.document);
+  check('every menu item shows an English AND an Amharic name',
+    names.length === 27 && names.every((n) => n.en && n.am),
+    names.filter((n) => !n.en || !n.am).map((n) => n.en).join(', ') || 'ok');
+  check('Amharic names are tagged lang="am" (correct font + screen readers)',
+    names.every((n) => n.lang === 'am'));
+  check('English name is still the first thing inside .item-name (cart reads it)',
+    names.every((n) => n.firstText === n.en),
+    names.filter((n) => n.firstText !== n.en).map((n) => n.en).join(', ') || 'ok');
+
+  // the everyday Ethiopian spellings, not literal translations
+  const amharic = Object.fromEntries(names.map((n) => [n.en, n.am]));
+  const expectedAmharic = {
+    'Margherita': 'ማርጋሪታ',
+    'Classic Beef Burger': 'ክላሲክ ቢፍ በርገር',
+    'Double Cheese Burger': 'ዳብል ቺዝ በርገር',
+    'Chicken BBQ': 'የዶሮ ቢቢኪው',
+    'Fresh Orange Juice': 'ትኩስ የብርቱካን ጁስ',
+    'Macchiato': 'ማኪያቶ',
+    'Iced Coffee': 'የቀዘቀዘ ቡና',
+    'Fasting Breakfast': 'የጾም ቁርስ',
+    'Chicken Rice': 'የዶሮ ሩዝ',
+    'Fries (ቺፕስ)': 'የተጠበሰ ድንች',
+  };
+  const wrongAmharic = Object.keys(expectedAmharic)
+    .filter((en) => amharic[en] !== expectedAmharic[en])
+    .map((en) => en + ' → ' + amharic[en] + ' (expected ' + expectedAmharic[en] + ')');
+  check('Amharic names use natural Ethiopian spellings', wrongAmharic.length === 0,
+    wrongAmharic.join('; '));
+
+  check('Amharic category name shown in the section heading',
+    /class="section-title-am" lang="am">ፒዛ</.test(html) &&
+    /class="section-title-am" lang="am">ቁርስ</.test(html));
+
+  // ── the cart still reads both names off the new markup ────────────────────
+  console.log('▸ 1b. Cart works with the two-line bilingual name');
+  const cartPage = await loadPage('index.html', ['js/menu.js', 'js/cart.js']);
+  const kw = cartPage.window;
+  await waitFor(() => kw.document.querySelectorAll('.menu-item .harmony-cart-add').length > 0);
+
+  const cartCard = Array.from(kw.document.querySelectorAll('.menu-item'))
+    .find((el) => el.querySelector('.item-name') && el.querySelector('.item-name').textContent.startsWith('Margherita'));
+  cartCard.querySelector('.harmony-cart-add').dispatchEvent(new kw.Event('click', { bubbles: true }));
+
+  const cartLine = Object.values(kw.HarmonyCart.items())[0] || {};
+  check('cart keeps the English name', cartLine.name === 'Margherita', JSON.stringify(cartLine));
+  check('cart keeps the Amharic name too', cartLine.nameAm === 'ማርጋሪታ', JSON.stringify(cartLine));
+  check('cart price/count unchanged', kw.HarmonyCart.total() === 450 && kw.HarmonyCart.count() === 1,
+    'total=' + kw.HarmonyCart.total());
+  check('cart drawer shows both names',
+    kw.document.querySelector('.harmony-cart-name').textContent.includes('Margherita') &&
+    kw.document.querySelector('.harmony-cart-name').textContent.includes('ማርጋሪታ'));
+
   // tab filtering still works
   const pizzaTab = Array.from(tabs).find((t) => t.dataset.target === 'pizza');
   pizzaTab.dispatchEvent(new cw.Event('click', { bubbles: true }));
@@ -244,15 +313,21 @@ async function main() {
   check('edit modal opens pre-filled with the item',
     aw.document.getElementById('it_name').value === 'Margherita' &&
     String(aw.document.getElementById('it_price').value) === '450');
+  check('edit modal is pre-filled with the Amharic name',
+    aw.document.getElementById('it_name_am').value === 'ማርጋሪታ',
+    'got "' + aw.document.getElementById('it_name_am').value + '"');
 
-  // change price 450 → 499
+  // change price 450 → 499 and tweak the Amharic name
   aw.document.getElementById('it_price').value = '499';
+  aw.document.getElementById('it_name_am').value = 'ማርጋሪታ ልዩ';
   aw.document.getElementById('itemForm').dispatchEvent(new aw.Event('submit', { bubbles: true, cancelable: true }));
   await waitFor(() => aw.document.getElementById('itemModal').hidden);
 
   const dbAfter = await (await fetch(BASE + '/rest/v1/menu_items?name=eq.Margherita')).json();
   check('price is persisted to the database as 499', Number(dbAfter[0].price) === 499,
     'db price = ' + dbAfter[0].price);
+  check('Amharic name edited in the dashboard is saved',
+    dbAfter[0].name_am === 'ማርጋሪታ ልዩ', 'db name_am = ' + dbAfter[0].name_am);
 
   // reload the customer menu — it must show the new price
   const cust2 = await loadPage('index.html', ['js/menu.js']);
@@ -262,6 +337,8 @@ async function main() {
     /Margherita[\s\S]{0,300}499 ETB/.test(cw2.document.body.innerHTML));
   check('old price 450 is gone from the customer menu',
     !/Margherita[\s\S]{0,300}450 ETB/.test(cw2.document.body.innerHTML));
+  check('⭐ customer menu shows the edited Amharic name',
+    cw2.document.body.innerHTML.includes('ማርጋሪታ ልዩ'));
 
   // ─────────────────────────────────────────────────────────────────────────
   console.log('▸ 5. Add / edit / delete a menu item');
@@ -289,6 +366,10 @@ async function main() {
   check('new item appears on the customer menu',
     cust3.window.document.body.innerHTML.includes('Test Mocha') &&
     cust3.window.document.body.innerHTML.includes('175 ETB'));
+  const mochaCard = Array.from(cust3.window.document.querySelectorAll('.menu-item'))
+    .find((el) => el.textContent.includes('Test Mocha'));
+  check('item with no Amharic name still renders (English only, no empty line)',
+    !mochaCard.querySelector('.item-name-am'));
 
   // rename it
   const mochaRow = Array.from(aw.document.querySelectorAll('#itemRows .row-card'))
@@ -297,11 +378,15 @@ async function main() {
   await waitFor(() => !aw.document.getElementById('itemModal').hidden);
   aw.document.getElementById('it_name').value = 'Test Mocha Deluxe';
   aw.document.getElementById('it_desc').value = 'Now with cream';
+  aw.document.getElementById('it_name_am').value = 'ቴስት ሞካ';
   aw.document.getElementById('itemForm').dispatchEvent(new aw.Event('submit', { bubbles: true, cancelable: true }));
   await waitFor(() => aw.document.getElementById('itemModal').hidden);
   const renamed = await (await fetch(BASE + '/rest/v1/menu_items?name=eq.Test%20Mocha%20Deluxe')).json();
   check('editing name + description persists',
     renamed.length === 1 && renamed[0].description === 'Now with cream');
+  check('adding an Amharic name to an existing item persists',
+    renamed.length === 1 && renamed[0].name_am === 'ቴስት ሞካ',
+    'name_am = ' + (renamed[0] || {}).name_am);
 
   // toggle availability
   const deluxeRow = Array.from(aw.document.querySelectorAll('#itemRows .row-card'))
@@ -345,12 +430,17 @@ async function main() {
     aw.document.getElementById('ct_slug').value === 'desserts',
     'got "' + aw.document.getElementById('ct_slug').value + '"');
   aw.document.getElementById('ct_emoji').value = '🍰';
+  aw.document.getElementById('ct_name_am').value = 'ጣፋጭ ምግቦች';
   aw.document.getElementById('ct_subtitle').value = 'Sweet treats';
   aw.document.getElementById('catForm').dispatchEvent(new aw.Event('submit', { bubbles: true, cancelable: true }));
   await waitFor(() => aw.document.getElementById('catModal').hidden);
 
   const cats = await (await fetch(BASE + '/rest/v1/categories?slug=eq.desserts')).json();
   check('new category saved to the database', cats.length === 1 && cats[0].emoji === '🍰');
+  check('category Amharic name saved from the dashboard',
+    cats.length === 1 && cats[0].name_am === 'ጣፋጭ ምግቦች', 'name_am = ' + (cats[0] || {}).name_am);
+  check('admin category list shows the Amharic name',
+    aw.document.getElementById('catRows').textContent.includes('ጣፋጭ ምግቦች'));
 
   // rename the category
   const dessertRow = Array.from(aw.document.querySelectorAll('#catRows .row-card'))

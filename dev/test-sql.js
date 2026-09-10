@@ -184,6 +184,49 @@ async function main() {
   const badges = (await admin(`select count(*)::int n from menu_items where badge='new'`)).rows[0].n;
   check('NEW badges preserved', badges === 5, 'got ' + badges);
 
+  // ── Amharic names (name_am) — no schema change, just data ────────────────
+  console.log('▸ 3b. Amharic names seeded for the bilingual menu');
+  const itemCols = (await admin(`select column_name from information_schema.columns
+    where table_schema='public' and table_name='menu_items'`)).rows.map(r => r.column_name);
+  const catCols = (await admin(`select column_name from information_schema.columns
+    where table_schema='public' and table_name='categories'`)).rows.map(r => r.column_name);
+  check('menu_items.name_am already existed (no schema change needed)',
+    itemCols.includes('name_am'), itemCols.join(', '));
+  check('categories.name_am already existed (no schema change needed)',
+    catCols.includes('name_am'));
+
+  const namedItems = (await admin(`select count(*)::int n from menu_items where name_am is not null`)).rows[0].n;
+  const namedCats = (await admin(`select count(*)::int n from categories where name_am is not null`)).rows[0].n;
+  check('all 27 items have an Amharic name (also proved by the re-run above)',
+    namedItems === 27, 'got ' + namedItems);
+  check('all 7 categories have an Amharic name', namedCats === 7, 'got ' + namedCats);
+
+  const amharicNames = (await admin(`select name, name_am from menu_items
+    where name in ('Margherita','Classic Beef Burger','Chicken BBQ','Macchiato','Fries (ቺፕስ)','Chicken Rice')
+    order by name`)).rows;
+  const amharicMap = Object.fromEntries(amharicNames.map(r => [r.name, r.name_am]));
+  const expectedNames = {
+    'Margherita': 'ማርጋሪታ',
+    'Classic Beef Burger': 'ክላሲክ ቢፍ በርገር',
+    'Chicken BBQ': 'የዶሮ ቢቢኪው',
+    'Macchiato': 'ማኪያቶ',
+    'Fries (ቺፕስ)': 'የተጠበሰ ድንች',
+    'Chicken Rice': 'የዶሮ ሩዝ',
+  };
+  const badNames = Object.keys(expectedNames)
+    .filter(k => amharicMap[k] !== expectedNames[k])
+    .map(k => k + ' → ' + amharicMap[k]);
+  check('Amharic names use natural Ethiopian spellings', badNames.length === 0, badNames.join('; '));
+  check('Amharic category names seeded',
+    (await admin(`select name_am from categories where slug='coffee'`)).rows[0].name_am === 'ቡና');
+
+  // the owner renames something in the dashboard, then pastes the SQL again
+  await admin(`update menu_items set name_am='የኔ ስም' where name='Latte'`);
+  await admin(runAll);
+  const keptName = (await admin(`select name_am from menu_items where name='Latte'`)).rows[0].name_am;
+  check('re-running the seed never overwrites a hand-edited Amharic name',
+    keptName === 'የኔ ስም', 'got ' + keptName);
+
   // ── create an owner, like Step 3 of SETUP.md ─────────────────────────────
   console.log('▸ 4. Creating the cafe owner (simulating 04_create_owner.sql)');
   const ownerId = (await admin(`insert into auth.users (email, email_confirmed_at)

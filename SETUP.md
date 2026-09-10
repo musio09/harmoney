@@ -25,7 +25,8 @@ Cost: **$0** (Supabase free tier + GitHub Pages).
 Open **SQL Editor** → **New query**, paste the entire contents of
 **`supabase/00_run_all.sql`**, and press **Run**. That one file creates the
 tables, applies all security policies, creates the image bucket, and loads your
-existing 27 menu items and 7 categories.
+existing 27 menu items and 7 categories — each with its Amharic name, so the
+menu shows English and Amharic together (`Burger በርገር`).
 
 It is safe to re-run — nothing gets duplicated.
 
@@ -36,7 +37,7 @@ It is safe to re-run — nothing gets duplicated.
 |---|---|---|
 | 1 | `supabase/01_schema.sql` | Tables, indexes, triggers, realtime |
 | 2 | `supabase/02_rls_policies.sql` | Security policies + image storage bucket |
-| 3 | `supabase/03_seed_data.sql` | Your current 27 items and 7 categories |
+| 3 | `supabase/03_seed_data.sql` | Your current 27 items and 7 categories + their Amharic names |
 
 </details>
 

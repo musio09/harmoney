@@ -19,12 +19,60 @@ dashboard — no code, no redeploys.
 - Log in securely (email + password)
 - Add / edit / delete menu items — name, price, description (English + Amharic),
   emoji or uploaded photo, category, NEW/HOT badge, sort order
+- Amharic name for every item and category — the menu prints English **and**
+  Amharic together (`Burger በርገር`), so tourists and Amharic speakers both read it
 - Mark items **available / sold out** with one tap
 - Add / edit / delete categories
 - Edit cafe info — name, tagline, address, phone, currency, footer
 - Log out
 
 Every change appears on customer phones immediately.
+
+---
+
+## Amharic names (bilingual menu)
+
+Every item and category carries an Amharic name in the `name_am` column — that
+column was already in the schema, so **no database change was needed**. The
+customer menu prints the English and the Amharic name together:
+
+```
+🍔 Classic Beef Burger                    420 ETB
+   ክላሲክ ቢፍ በርገር
+   Beef Patty • Lettuce • Tomato • Cheese
+```
+
+- The English name stays first and unchanged, so tourists and non-Amharic
+  speakers still read the menu normally.
+- The Amharic line sits directly under it, rendered with **Noto Sans Ethiopic**
+  and marked `lang="am"`, a little larger than the description text so it stays
+  crisp and readable on a phone.
+- Category headings are bilingual too (`🍕 Pizza ፒዛ`); the tabs at the top stay
+  short and in English only.
+- Items without an Amharic name simply show the English name — nothing breaks.
+- `supabase/03_seed_data.sql` fills in the names for the whole menu. It only
+  touches rows where `name_am` is still empty, so re-running it **never
+  overwrites** a name you edited in the dashboard.
+- To change one: **Admin → Menu Items → Edit → Name (Amharic)**. Categories have
+  the same field, and the dashboard lists show both names.
+
+### Common items, ready to copy
+
+The everyday spellings Ethiopian cafés and restaurants use — not literal
+translations of the English:
+
+| English | Amharic | English | Amharic |
+|---|---|---|---|
+| Burger | በርገር | Water | ውሃ |
+| Pizza | ፒዛ | Soft drinks | ለስላሳ መጠጦች |
+| Agelgel | አገልግል | Bottled water | የታሸገ ውሃ |
+| Eggs | እንቁላል | Tea | ሻይ |
+| Lamb | በግ ሥጋ | Coffee | ቡና |
+| Beef | የበሬ ሥጋ | Macchiato | ማኪያቶ |
+| Chicken | ዶሮ | Juice | ጭማቂ · ጁስ |
+| Tibs · Firfir · Shiro | ጥብስ · ፍርፍር · ሽሮ | Milk | ወተት |
+| Doro Wat · Kitfo | ዶሮ ወጥ · ክትፎ | Fresh juice | ፍሬሽ ጁስ |
+| Injera | እንጀራ | French fries | ቺፕስ |
 
 ---
 
@@ -70,9 +118,9 @@ supabase/
   04_create_owner.sql       Promote a user to cafe owner
 dev/                        Local testing only — not used in production
   mock-supabase.js          In-memory fake Supabase backend
-  test-e2e.js               48 automated end-to-end checks
+  test-e2e.js               64 automated end-to-end checks
   test-connect.js           22 checks for the connection checker
-  test-sql.js               50 checks running the SQL on real PostgreSQL
+  test-sql.js               57 checks running the SQL on real PostgreSQL
   serve-demo.js             Clickable local demo
 docs/
   github-pages-workflow.yml.txt   Optional Actions deploy template (not required)
@@ -113,7 +161,7 @@ node dev/serve-demo.js
 ```bash
 # run the automated test suite
 npm install --no-save jsdom @supabase/supabase-js
-node dev/test-e2e.js      # → 48 passed, 0 failed
+node dev/test-e2e.js      # → 64 passed, 0 failed
 node dev/test-connect.js  # → 22 passed, 0 failed
 ```
 
@@ -122,7 +170,7 @@ every RLS rule including privilege-escalation attempts):
 
 ```bash
 npm install --no-save pg @embedded-postgres/linux-x64
-node dev/test-sql.js      # → 50 passed, 0 failed
+node dev/test-sql.js      # → 57 passed, 0 failed
 ```
 
 The tests boot a mock Supabase backend, load the real pages in jsdom, and verify

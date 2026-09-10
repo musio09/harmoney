@@ -14,55 +14,57 @@ const ADMIN_PASSWORD = 'test-password-123';
 const ADMIN_TOKEN = 'mock-admin-access-token';
 
 function seed() {
+  //              slug        English name    Amharic name (name_am)  emoji  subtitle           icon_bg    sort
   const cats = [
-    ['pizza', 'Pizza', '🍕', 'Freshly baked', '#fff3e0', 1],
-    ['burger', 'Burgers', '🍔', 'Juicy & fresh', '#fce4ec', 2],
-    ['juice', 'Fresh Juice', '🥤', '100% natural', '#e8f5e9', 3],
-    ['coffee', 'Coffee', '☕', 'Freshly brewed', '#efebe9', 4],
-    ['breakfast', 'Breakfast', '🍳', 'Served all day', '#fff8e1', 5],
-    ['main', 'Main Dishes', '🍽', 'Hearty meals', '#f3e5f5', 6],
-    ['fastfood', 'Fast Food', '🌭', 'Quick bites', '#e3f2fd', 7],
-  ].map(([slug, name, emoji, subtitle, icon_bg, sort_order]) => ({
-    id: randomUUID(), slug, name, name_am: null, emoji, subtitle, icon_bg,
+    ['pizza', 'Pizza', 'ፒዛ', '🍕', 'Freshly baked', '#fff3e0', 1],
+    ['burger', 'Burgers', 'በርገር', '🍔', 'Juicy & fresh', '#fce4ec', 2],
+    ['juice', 'Fresh Juice', 'ፍሬሽ ጁስ', '🥤', '100% natural', '#e8f5e9', 3],
+    ['coffee', 'Coffee', 'ቡና', '☕', 'Freshly brewed', '#efebe9', 4],
+    ['breakfast', 'Breakfast', 'ቁርስ', '🍳', 'Served all day', '#fff8e1', 5],
+    ['main', 'Main Dishes', 'ዋና ምግቦች', '🍽', 'Hearty meals', '#f3e5f5', 6],
+    ['fastfood', 'Fast Food', 'ፈጣን ምግብ', '🌭', 'Quick bites', '#e3f2fd', 7],
+  ].map(([slug, name, name_am, emoji, subtitle, icon_bg, sort_order]) => ({
+    id: randomUUID(), slug, name, name_am, emoji, subtitle, icon_bg,
     sort_order, is_active: true,
   }));
 
   const bySlug = Object.fromEntries(cats.map((c) => [c.slug, c.id]));
 
+  // [category, English name, Amharic name, description, description_am, price, emoji, badge, sort]
   const rawItems = [
-    ['pizza', 'Margherita', 'Tomato • Mozzarella • Basil', null, 450, '🍕', null, 1],
-    ['pizza', 'Pepperoni', 'Pepperoni • Cheese • Tomato Sauce', null, 520, '🍕', 'new', 2],
-    ['pizza', 'Cheese Lovers', 'Mozzarella • Cheddar • Parmesan', null, 480, '🧀', 'new', 3],
-    ['pizza', 'Spicy Veggie', 'Bell Peppers • Olives • Onion • Jalapeño', null, 420, '🌶️', null, 4],
-    ['pizza', 'Chicken BBQ', 'Grilled Chicken • BBQ Sauce • Cheese', null, 550, '🍗', null, 5],
-    ['burger', 'Classic Beef Burger', 'Beef Patty • Lettuce • Tomato • Cheese', null, 420, '🍔', 'new', 1],
-    ['burger', 'Chicken Crispy Burger', 'Crispy Chicken • Coleslaw • Mayo', null, 400, '🐔', null, 2],
-    ['burger', 'Double Cheese Burger', 'Double Beef • Double Cheese • Special Sauce', null, 520, '🧀', 'new', 3],
-    ['burger', 'Veggie Burger', 'Veggie Patty • Lettuce • Tomato • Avocado', null, 350, '🥬', null, 4],
-    ['burger', 'Spicy BBQ Burger', 'Beef Patty • Pepper Jack • Jalapeño • BBQ', null, 460, '🔥', 'hot', 5],
-    ['juice', 'Fresh Orange Juice', 'Freshly squeezed oranges', null, 150, '🍊', null, 1],
-    ['juice', 'Mango Juice', 'Ripe mango blended to perfection', null, 170, '🥭', null, 2],
-    ['juice', 'Strawberry Smoothie', 'Strawberry • Yogurt • Honey', null, 200, '🍓', 'new', 3],
-    ['juice', 'Avocado Juice', 'Creamy avocado with milk', null, 180, '🥑', null, 4],
-    ['juice', 'Pineapple Punch', 'Pineapple • Lemon • Mint', null, 160, '🍍', null, 5],
-    ['juice', 'Mix Fruit Juice', 'Seasonal fruits blended fresh', null, 200, '🥤', null, 6],
-    ['coffee', 'Espresso', null, null, 120, '☕', null, 1],
-    ['coffee', 'Cappuccino', null, null, 150, '☕', null, 2],
-    ['coffee', 'Latte', null, null, 160, '☕', null, 3],
-    ['coffee', 'Macchiato', null, null, 140, '🥛', null, 4],
-    ['coffee', 'Iced Coffee', null, null, 170, '❄️', null, 5],
-    ['breakfast', 'Special Breakfast', null, 'እንቁላል • ዳቦ • አቮካዶ', 200, '🍳', null, 1],
-    ['breakfast', 'Fasting Breakfast', null, 'አትክልት • ዳቦ • ልዩ ጎን', 220, '🥗', null, 2],
-    ['main', 'Special Pasta', null, 'ፓስታ', 280, '🍝', null, 1],
-    ['main', 'Chicken Rice', null, 'ሩዝ • ዶሮ • ሰላጣ', 300, '🍚', null, 2],
-    ['fastfood', 'Chicken Sandwich', null, null, 400, '🥪', null, 1],
-    ['fastfood', 'Fries (ቺፕስ)', null, null, 250, '🍟', null, 2],
+    ['pizza', 'Margherita', 'ማርጋሪታ', 'Tomato • Mozzarella • Basil', null, 450, '🍕', null, 1],
+    ['pizza', 'Pepperoni', 'ፔፐሮኒ', 'Pepperoni • Cheese • Tomato Sauce', null, 520, '🍕', 'new', 2],
+    ['pizza', 'Cheese Lovers', 'ቺዝ ላቨርስ', 'Mozzarella • Cheddar • Parmesan', null, 480, '🧀', 'new', 3],
+    ['pizza', 'Spicy Veggie', 'ስፒሲ ቨጂ', 'Bell Peppers • Olives • Onion • Jalapeño', null, 420, '🌶️', null, 4],
+    ['pizza', 'Chicken BBQ', 'የዶሮ ቢቢኪው', 'Grilled Chicken • BBQ Sauce • Cheese', null, 550, '🍗', null, 5],
+    ['burger', 'Classic Beef Burger', 'ክላሲክ ቢፍ በርገር', 'Beef Patty • Lettuce • Tomato • Cheese', null, 420, '🍔', 'new', 1],
+    ['burger', 'Chicken Crispy Burger', 'ክሪስፒ ቺከን በርገር', 'Crispy Chicken • Coleslaw • Mayo', null, 400, '🐔', null, 2],
+    ['burger', 'Double Cheese Burger', 'ዳብል ቺዝ በርገር', 'Double Beef • Double Cheese • Special Sauce', null, 520, '🧀', 'new', 3],
+    ['burger', 'Veggie Burger', 'የአትክልት በርገር', 'Veggie Patty • Lettuce • Tomato • Avocado', null, 350, '🥬', null, 4],
+    ['burger', 'Spicy BBQ Burger', 'ስፒሲ ቢቢኪው በርገር', 'Beef Patty • Pepper Jack • Jalapeño • BBQ', null, 460, '🔥', 'hot', 5],
+    ['juice', 'Fresh Orange Juice', 'ትኩስ የብርቱካን ጁስ', 'Freshly squeezed oranges', null, 150, '🍊', null, 1],
+    ['juice', 'Mango Juice', 'የማንጎ ጁስ', 'Ripe mango blended to perfection', null, 170, '🥭', null, 2],
+    ['juice', 'Strawberry Smoothie', 'የስትሮቤሪ ስሙዚ', 'Strawberry • Yogurt • Honey', null, 200, '🍓', 'new', 3],
+    ['juice', 'Avocado Juice', 'የአቮካዶ ጁስ', 'Creamy avocado with milk', null, 180, '🥑', null, 4],
+    ['juice', 'Pineapple Punch', 'የአናናስ ፓንች', 'Pineapple • Lemon • Mint', null, 160, '🍍', null, 5],
+    ['juice', 'Mix Fruit Juice', 'የተቀላቀለ ፍራፍሬ ጁስ', 'Seasonal fruits blended fresh', null, 200, '🥤', null, 6],
+    ['coffee', 'Espresso', 'ኤስፕሬሶ', null, null, 120, '☕', null, 1],
+    ['coffee', 'Cappuccino', 'ካፑቺኖ', null, null, 150, '☕', null, 2],
+    ['coffee', 'Latte', 'ላቴ', null, null, 160, '☕', null, 3],
+    ['coffee', 'Macchiato', 'ማኪያቶ', null, null, 140, '🥛', null, 4],
+    ['coffee', 'Iced Coffee', 'የቀዘቀዘ ቡና', null, null, 170, '❄️', null, 5],
+    ['breakfast', 'Special Breakfast', 'ልዩ ቁርስ', null, 'እንቁላል • ዳቦ • አቮካዶ', 200, '🍳', null, 1],
+    ['breakfast', 'Fasting Breakfast', 'የጾም ቁርስ', null, 'አትክልት • ዳቦ • ልዩ ጎን', 220, '🥗', null, 2],
+    ['main', 'Special Pasta', 'ልዩ ፓስታ', null, 'ፓስታ', 280, '🍝', null, 1],
+    ['main', 'Chicken Rice', 'የዶሮ ሩዝ', null, 'ሩዝ • ዶሮ • ሰላጣ', 300, '🍚', null, 2],
+    ['fastfood', 'Chicken Sandwich', 'የዶሮ ሳንድዊች', null, null, 400, '🥪', null, 1],
+    ['fastfood', 'Fries (ቺፕስ)', 'የተጠበሰ ድንች', null, null, 250, '🍟', null, 2],
   ];
 
-  const items = rawItems.map(([cat, name, description, description_am, price, emoji, badge, sort_order]) => ({
+  const items = rawItems.map(([cat, name, name_am, description, description_am, price, emoji, badge, sort_order]) => ({
     id: randomUUID(),
     category_id: bySlug[cat],
-    name, name_am: null, description, description_am,
+    name, name_am, description, description_am,
     price, emoji, image_url: null, badge,
     is_available: true, sort_order,
   }));

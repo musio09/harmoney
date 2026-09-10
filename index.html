@@ -160,6 +160,14 @@
       margin-left: auto;
     }
 
+    /* Amharic category name, e.g. "🍕 Pizza ፒዛ" */
+    .section-title small.section-title-am {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--muted);
+    }
+
     /* ── MENU ITEMS ── */
     .menu-items {
       display: flex;
@@ -234,10 +242,17 @@
       color: var(--text);
     }
 
-    .item-name small {
-      font-weight: 500;
-      font-size: 12px;
-      color: var(--muted);
+    /* Amharic name — its own line under the English one, so both languages
+       stay easy to scan on a phone and neither one gets squeezed */
+    .item-name small,
+    .item-name small.item-name-am {
+      display: block;
+      margin-top: 1px;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.45;
+      color: #565656;
+      letter-spacing: 0;
     }
 
     .item-price {
@@ -354,10 +369,13 @@
       .menu-item { padding: 12px 14px; }
       .item-icon { width: 38px; height: 38px; min-width: 38px; font-size: 17px; }
       .item-name { font-size: 14px; }
+      .item-name small,
+      .item-name small.item-name-am { font-size: 13px; }
       .item-price { font-size: 14px; }
       .nav-tabs { padding: 8px 12px; }
       .nav-tab { padding: 6px 14px; font-size: 12px; }
       .section-title { font-size: 19px; }
+      .section-title small.section-title-am { font-size: 13px; }
     }
   </style>
 </head>

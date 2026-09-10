@@ -158,6 +158,7 @@
       .filter((i) => !state.filterCat || i.category_id === state.filterCat)
       .filter((i) => !q ||
         String(i.name).toLowerCase().includes(q) ||
+        String(i.name_am || '').includes(q) ||
         String(i.description || '').toLowerCase().includes(q))
       .sort((a, b) => {
         const ca = catById(a.category_id), cb = catById(b.category_id);
@@ -190,6 +191,7 @@
         icon +
         '<div class="row-main">' +
           '<div class="row-name">' + escapeHtml(i.name) + pills + '</div>' +
+          (i.name_am ? '<div class="row-name-am" lang="am">' + escapeHtml(i.name_am) + '</div>' : '') +
           '<div class="row-meta">' + escapeHtml(cat ? (cat.emoji || '') + ' ' + cat.name : 'No category') +
             (i.description ? ' • ' + escapeHtml(i.description) : '') + '</div>' +
         '</div>' +
@@ -275,6 +277,7 @@
     $('itemModalTitle').textContent = item ? 'Edit Menu Item' : 'Add Menu Item';
     $('it_id').value = item ? item.id : '';
     $('it_name').value = item ? item.name : '';
+    $('it_name_am').value = item ? (item.name_am || '') : '';
     $('it_price').value = item ? item.price : '';
     $('it_category').value = item && item.category_id ? item.category_id : (state.filterCat || '');
     $('it_desc').value = item ? (item.description || '') : '';
@@ -336,6 +339,7 @@
 
       const payload = {
         name: $('it_name').value.trim(),
+        name_am: $('it_name_am').value.trim() || null,
         price: parseFloat($('it_price').value) || 0,
         category_id: $('it_category').value || null,
         description: $('it_desc').value.trim() || null,
@@ -397,6 +401,7 @@
         '<div class="row-main">' +
           '<div class="row-name">' + escapeHtml(c.name) +
             (c.is_active === false ? '<span class="pill off">HIDDEN</span>' : '') + '</div>' +
+          (c.name_am ? '<div class="row-name-am" lang="am">' + escapeHtml(c.name_am) + '</div>' : '') +
           '<div class="row-meta">' + escapeHtml(c.slug) + ' • ' + count + ' item' + (count === 1 ? '' : 's') +
             (c.subtitle ? ' • ' + escapeHtml(c.subtitle) : '') + '</div>' +
         '</div>' +
@@ -419,6 +424,7 @@
     $('catModalTitle').textContent = cat ? 'Edit Category' : 'Add Category';
     $('ct_id').value = cat ? cat.id : '';
     $('ct_name').value = cat ? cat.name : '';
+    $('ct_name_am').value = cat ? (cat.name_am || '') : '';
     $('ct_slug').value = cat ? cat.slug : '';
     $('ct_emoji').value = cat ? (cat.emoji || '') : '';
     $('ct_subtitle').value = cat ? (cat.subtitle || '') : '';
@@ -455,6 +461,7 @@
     try {
       const payload = {
         name: $('ct_name').value.trim(),
+        name_am: $('ct_name_am').value.trim() || null,
         slug: $('ct_slug').value.trim().toLowerCase(),
         emoji: $('ct_emoji').value.trim() || '🍽',
         subtitle: $('ct_subtitle').value.trim() || null,

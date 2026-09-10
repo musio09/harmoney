@@ -92,6 +92,10 @@
   }
 
   // ── one menu item (same markup as the original static version) ────────────
+  //  Bilingual name: the English name stays on the first line, the Amharic
+  //  name sits under it in a <small lang="am">.  cart.js reads the English
+  //  name from the direct text nodes and the Amharic name from that <small>,
+  //  so this exact shape must be kept.
   function itemHtml(item, category, currency) {
     const soldOut = item.is_available === false;
     const iconBg = category && category.icon_bg ? category.icon_bg : '';
@@ -112,7 +116,9 @@
     else if (item.badge === 'new') badge = '<span class="badge new">NEW</span>';
     else if (item.badge === 'hot') badge = '<span class="badge hot">HOT</span>';
 
-    const nameAm = item.name_am ? ' <small>' + esc(item.name_am) + '</small>' : '';
+    const nameAm = item.name_am
+      ? '<small class="item-name-am" lang="am">' + esc(item.name_am) + '</small>'
+      : '';
 
     let desc = '';
     if (item.description) {
@@ -130,7 +136,7 @@
         icon +
         '<div class="item-info">' +
           '<div class="item-top">' +
-            '<span class="item-name">' + esc(item.name) + nameAm + badge + '</span>' +
+            '<span class="item-name">' + esc(item.name) + badge + nameAm + '</span>' +
             '<span class="item-price">' + esc(formatPrice(item.price, currency)) + '</span>' +
           '</div>' +
           desc +
@@ -170,6 +176,7 @@
       sections.push(
         '<section class="menu-section" data-category="' + esc(cat.slug) + '">' +
           '<h2 class="section-title">' + esc(cat.emoji || '🍽') + ' ' + esc(cat.name) +
+            (cat.name_am ? '<small class="section-title-am" lang="am">' + esc(cat.name_am) + '</small>' : '') +
             (cat.subtitle ? '<span>' + esc(cat.subtitle) + '</span>' : '') +
           '</h2>' +
           '<div class="menu-items">' + items.map((i) => itemHtml(i, cat, currency)).join('') + '</div>' +
