@@ -237,6 +237,7 @@
 
     .row-main { flex: 1; min-width: 160px; }
     .row-name { font-weight: 700; font-size: 15px; }
+    .row-name-am { font-size: 13px; font-weight: 600; color: #565656; line-height: 1.4; }
     .row-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
     .row-price { font-weight: 800; color: var(--secondary); white-space: nowrap; }
     .row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -433,10 +434,19 @@
 
       <input type="hidden" id="it_id">
 
-      <div class="field">
-        <label for="it_name">Name *</label>
-        <input type="text" id="it_name" required>
+      <div class="grid-2">
+        <div class="field">
+          <label for="it_name">Name *</label>
+          <input type="text" id="it_name" required>
+        </div>
+        <div class="field">
+          <label for="it_name_am">Name (Amharic)</label>
+          <input type="text" id="it_name_am" lang="am" placeholder="በርገር">
+        </div>
       </div>
+      <p class="hint" style="margin:-6px 0 12px">
+        The Amharic name is printed under the English name on the menu, e.g. “Burger በርገር”.
+      </p>
 
       <div class="grid-2">
         <div class="field">
@@ -526,6 +536,11 @@
           <label for="ct_emoji">Emoji</label>
           <input type="text" id="ct_emoji" maxlength="4" placeholder="🍕">
         </div>
+      </div>
+
+      <div class="field">
+        <label for="ct_name_am">Name (Amharic)</label>
+        <input type="text" id="ct_name_am" lang="am" placeholder="ፒዛ">
       </div>
 
       <div class="field">

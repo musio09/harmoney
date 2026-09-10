@@ -2,6 +2,8 @@
 --  HARMONY CAFE — QR MENU SYSTEM
 --  03_seed_data.sql  •  Your CURRENT menu, transcribed 1:1 from index.html
 --  Run this THIRD. Safe to re-run (idempotent on category slug / item name).
+--  Amharic names (name_am) for every category and item are filled in at the
+--  bottom — the menu shows English + Amharic together, e.g. "burger በርገር".
 -- ============================================================================
 
 -- ── CAFE INFO ───────────────────────────────────────────────────────────────
@@ -66,3 +68,75 @@ join c on c.slug = v.cat
 where not exists (
   select 1 from public.menu_items m where m.name = v.name
 );
+
+-- ============================================================================
+--  AMHARIC NAMES  (name_am)
+--  ----------------------------------------------------------------------------
+--  The customer menu prints the English name with the Amharic name right
+--  below it, so tourists can read the menu and Amharic speakers see the names
+--  they actually order with ("burger በርገር", "pizza ፒዛ", "Water ውሃ").
+--  These are the everyday Ethiopian restaurant spellings, not word-for-word
+--  translations of the English.
+--
+--  • Nothing is overwritten: only rows whose name_am is still empty are filled.
+--    Rename anything in the dashboard afterwards and re-running this file
+--    leaves your text alone.
+--  • Needs no schema change — name_am already exists on both tables.
+-- ============================================================================
+
+-- ── category names ──────────────────────────────────────────────────────────
+update public.categories c
+   set name_am = v.name_am
+  from (values
+    ('pizza',     'ፒዛ'),
+    ('burger',    'በርገር'),
+    ('juice',     'ፍሬሽ ጁስ'),
+    ('coffee',    'ቡና'),
+    ('breakfast', 'ቁርስ'),
+    ('main',      'ዋና ምግቦች'),
+    ('fastfood',  'ፈጣን ምግብ')
+  ) as v(slug, name_am)
+ where c.slug = v.slug
+   and c.name_am is null;
+
+-- ── item names ──────────────────────────────────────────────────────────────
+update public.menu_items m
+   set name_am = v.name_am
+  from (values
+    -- PIZZA
+    ('Margherita',             'ማርጋሪታ'),
+    ('Pepperoni',              'ፔፐሮኒ'),
+    ('Cheese Lovers',          'ቺዝ ላቨርስ'),
+    ('Spicy Veggie',           'ስፒሲ ቨጂ'),
+    ('Chicken BBQ',            'የዶሮ ቢቢኪው'),
+    -- BURGERS
+    ('Classic Beef Burger',    'ክላሲክ ቢፍ በርገር'),
+    ('Chicken Crispy Burger',  'ክሪስፒ ቺከን በርገር'),
+    ('Double Cheese Burger',   'ዳብል ቺዝ በርገር'),
+    ('Veggie Burger',          'የአትክልት በርገር'),
+    ('Spicy BBQ Burger',       'ስፒሲ ቢቢኪው በርገር'),
+    -- FRESH JUICE
+    ('Fresh Orange Juice',     'ትኩስ የብርቱካን ጁስ'),
+    ('Mango Juice',            'የማንጎ ጁስ'),
+    ('Strawberry Smoothie',    'የስትሮቤሪ ስሙዚ'),
+    ('Avocado Juice',          'የአቮካዶ ጁስ'),
+    ('Pineapple Punch',        'የአናናስ ፓንች'),
+    ('Mix Fruit Juice',        'የተቀላቀለ ፍራፍሬ ጁስ'),
+    -- COFFEE
+    ('Espresso',               'ኤስፕሬሶ'),
+    ('Cappuccino',             'ካፑቺኖ'),
+    ('Latte',                  'ላቴ'),
+    ('Macchiato',              'ማኪያቶ'),
+    ('Iced Coffee',            'የቀዘቀዘ ቡና'),
+    -- BREAKFAST
+    ('Special Breakfast',      'ልዩ ቁርስ'),
+    ('Fasting Breakfast',      'የጾም ቁርስ'),
+    -- MAIN DISHES
+    ('Special Pasta',          'ልዩ ፓስታ'),
+    ('Chicken Rice',           'የዶሮ ሩዝ'),
+    -- FAST FOOD
+    ('Chicken Sandwich',       'የዶሮ ሳንድዊች'),
+    ('Fries (ቺፕስ)',            'የተጠበሰ ድንች')
+  ) as v(name, name_am)
+ where m.name = v.name
+   and m.name_am is null;
